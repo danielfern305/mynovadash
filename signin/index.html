@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — myNovaDash</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#1D9E75;--teal-d:#0F6E56;--dark:#0F1117;--dark2:#1A1D27;--white:#fff;--muted:rgba(255,255,255,.45);--border:rgba(255,255,255,.1)}
+body{font-family:'Inter',sans-serif;background:var(--dark);min-height:100vh;display:flex;flex-direction:column}
+
+nav{padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--white);text-decoration:none}
+.logo span{color:var(--teal)}
+.nav-link{font-size:14px;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--white)}
+
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.box{background:var(--dark2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2.5rem;width:100%;max-width:400px}
+
+.box-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white);margin-bottom:6px}
+.box-sub{font-size:14px;color:var(--muted);margin-bottom:2rem}
+
+.label{display:block;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--white);font-size:14px;outline:none;font-family:'Inter',sans-serif;margin-bottom:14px;transition:border-color .2s}
+.input:focus{border-color:var(--teal)}
+.input::placeholder{color:rgba(255,255,255,.25)}
+
+.btn{width:100%;padding:13px;background:var(--teal);color:var(--white);border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
+.btn:hover{background:var(--teal-d)}
+.btn:disabled{opacity:.6;cursor:default}
+
+.error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+.success{background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.3);color:#5DCAA5;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+
+.switch{text-align:center;margin-top:1.25rem;font-size:13px;color:rgba(255,255,255,.4)}
+.switch a{color:var(--teal);cursor:pointer;text-decoration:none}
+
+.divider{display:flex;align-items:center;gap:12px;margin:1.25rem 0}
+.divider-line{flex:1;height:1px;background:rgba(255,255,255,.08)}
+.divider-text{font-size:12px;color:rgba(255,255,255,.3)}
+
+.forgot{display:block;text-align:right;font-size:12px;color:rgba(255,255,255,.35);text-decoration:none;margin-top:-10px;margin-bottom:14px;cursor:pointer}
+.forgot:hover{color:var(--teal)}
+
+footer{padding:1.5rem 2rem;text-align:center;font-size:13px;color:rgba(255,255,255,.2)}
+footer a{color:rgba(255,255,255,.3);text-decoration:none}
+footer a:hover{color:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">my<span>Nova</span>Dash</a>
+  <a href="/" class="nav-link">← Back to home</a>
+</nav>
+
+<div class="main">
+  <div class="box">
+    <p class="box-title" id="box-title">Welcome back</p>
+    <p class="box-sub" id="box-sub">Sign in to your myNovaDash account</p>
+
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
+
+    <div id="name-wrap" style="display:none">
+      <label class="label">Your name</label>
+      <input class="input" id="name" type="text" placeholder="Your name">
+    </div>
+
+    <label class="label">Email</label>
+    <input class="input" id="email" type="email" placeholder="you@email.com">
+
+    <div id="pass-wrap">
+      <label class="label">Password</label>
+      <input class="input" id="pass" type="password" placeholder="••••••••" style="margin-bottom:6px">
+      <a class="forgot" id="forgot-link" onclick="showForgot()">Forgot password?</a>
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="handleSubmit()">Sign in</button>
+
+    <div class="divider"><div class="divider-line"></div><div class="divider-text">or</div><div class="divider-line"></div></div>
+
+    <div class="switch" id="switch-text">Don't have an account? <a onclick="toggleMode()">Sign up free</a></div>
+  </div>
+</div>
+
+<footer>
+  <a href="/">myNovaDash</a> &middot; <a href="/">Privacy</a> &middot; <a href="/">Terms</a>
+</footer>
+
+<script>
+const sb = supabase.createClient(
+  'https://nzccxsbhzovkqojyelxw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56Y2N4c2Joem92a3FvanllbHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2OTI5MDMsImV4cCI6MjA5NDI2ODkwM30.xraOqLGPoPPA0q4bPwzIoDUR3Xz9Kp-p9A7FuY8sRD4'
+);
+
+let mode = 'signin'; // signin | signup | forgot
+
+function showErr(msg){ const e=document.getElementById('error'); e.textContent=msg; e.style.display='block'; document.getElementById('success').style.display='none'; }
+function showOk(msg){ const e=document.getElementById('success'); e.textContent=msg; e.style.display='block'; document.getElementById('error').style.display='none'; }
+function clearMsgs(){ document.getElementById('error').style.display='none'; document.getElementById('success').style.display='none'; }
+
+function toggleMode(){
+  clearMsgs();
+  if(mode==='signin'){ mode='signup'; }
+  else if(mode==='signup'){ mode='signin'; }
+  else { mode='signin'; }
+  updateUI();
+}
+
+function showForgot(){
+  mode='forgot';
+  clearMsgs();
+  updateUI();
+}
+
+function updateUI(){
+  const title=document.getElementById('box-title');
+  const sub=document.getElementById('box-sub');
+  const btn=document.getElementById('submit-btn');
+  const sw=document.getElementById('switch-text');
+  const nameWrap=document.getElementById('name-wrap');
+  const passWrap=document.getElementById('pass-wrap');
+  const forgot=document.getElementById('forgot-link');
+
+  if(mode==='signin'){
+    title.textContent='Welcome back';
+    sub.textContent='Sign in to your myNovaDash account';
+    btn.textContent='Sign in';
+    nameWrap.style.display='none';
+    passWrap.style.display='block';
+    sw.innerHTML="Don't have an account? <a onclick='toggleMode()'>Sign up free</a>";
+  } else if(mode==='signup'){
+    title.textContent='Create your account';
+    sub.textContent='Start tracking your freelance business for free';
+    btn.textContent='Create account';
+    nameWrap.style.display='block';
+    passWrap.style.display='block';
+    sw.innerHTML="Already have an account? <a onclick='toggleMode()'>Sign in</a>";
+  } else if(mode==='forgot'){
+    title.textContent='Reset password';
+    sub.textContent="Enter your email and we'll send you a reset link";
+    btn.textContent='Send reset link';
+    nameWrap.style.display='none';
+    passWrap.style.display='none';
+    sw.innerHTML="Remember your password? <a onclick='toggleMode()'>Sign in</a>";
+  }
+}
+
+async function handleSubmit(){
+  const email=document.getElementById('email').value.trim();
+  const pass=document.getElementById('pass').value;
+  const name=document.getElementById('name').value.trim();
+  const btn=document.getElementById('submit-btn');
+  clearMsgs();
+
+  if(!email){ showErr('Please enter your email'); return; }
+  btn.disabled=true; btn.textContent='Loading...';
+
+  if(mode==='forgot'){
+    const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/app'});
+    if(error){ showErr(error.message); }
+    else{ showOk('Reset link sent. Check your email.'); }
+    btn.disabled=false; updateUI(); return;
+  }
+
+  if(!pass){ showErr('Please enter your password'); btn.disabled=false; updateUI(); return; }
+
+  if(mode==='signup'){
+    if(!name){ showErr('Please enter your name'); btn.disabled=false; return; }
+    const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});
+    if(error){ showErr(error.message); btn.disabled=false; updateUI(); return; }
+    if(data.user){ window.location.href='/app'; }
+    else{ showOk('Check your email to confirm your account, then sign in.'); btn.disabled=false; updateUI(); }
+  } else {
+    const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    if(error){ showErr('Invalid email or password'); btn.disabled=false; updateUI(); return; }
+    if(data.user){ window.location.href='/app'; }
+  }
+}
+
+document.addEventListener('keydown',e=>{ if(e.key==='Enter') handleSubmit(); });
+
+window.addEventListener('load',async()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  if(session?.user){ window.location.href='/app'; }
+});
+</script>
+</body>
+</html>
