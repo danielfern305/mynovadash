@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myNovaDash — Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#1D9E75;--teal-d:#0F6E56;--teal-l:#E1F5EE;--dark:#0F1117;--dark2:#1A1D27;--text:#1F2937;--muted:#6B7280;--light:#F9FAFB;--white:#fff;--border:#E5E7EB;--danger:#EF4444}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--light);line-height:1.6;min-height:100vh}
+#loading{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;z-index:999}
+.loading-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--white)}
+.loading-logo span{color:var(--teal)}
+#auth-screen{min-height:100vh;background:var(--dark);display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-box{background:var(--dark2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2.5rem;width:100%;max-width:400px}
+.auth-logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--white);margin-bottom:.5rem}
+.auth-logo span{color:var(--teal)}
+.auth-sub{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:2rem}
+.auth-label{display:block;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.auth-input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:var(--white);font-size:14px;outline:none;font-family:'Inter',sans-serif;margin-bottom:14px}
+.auth-input:focus{border-color:var(--teal)}
+.auth-input::placeholder{color:rgba(255,255,255,.25)}
+.auth-btn{width:100%;padding:12px;background:var(--teal);color:var(--white);border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
+.auth-btn:hover{background:var(--teal-d)}
+.auth-switch{text-align:center;margin-top:1.25rem;font-size:13px;color:rgba(255,255,255,.4)}
+.auth-switch a{color:var(--teal);cursor:pointer}
+.auth-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+#app{display:none;flex-direction:column;min-height:100vh}
+nav{background:var(--dark);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white);text-decoration:none}
+.nav-logo span{color:var(--teal)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{padding:6px 12px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;transition:all .2s}
+.nav-btn:hover{background:rgba(255,255,255,.08);color:var(--white)}
+.main{flex:1;padding:1.5rem;max-width:1000px;margin:0 auto;width:100%}
+.report-bar{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.report-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.chip{padding:3px 10px;font-size:12px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Inter',sans-serif;transition:all .2s}
+.chip.active{background:var(--teal);border-color:var(--teal);color:var(--white)}
+.chip:hover:not(.active){background:var(--light)}
+.report-name-input{margin-left:auto;font-size:12px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Inter',sans-serif;width:130px;text-align:right;background:transparent}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.25rem;background:var(--white);border-radius:10px 10px 0 0;padding:0 1rem}
+.tab-btn{padding:12px 16px;font-size:13px;cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Inter',sans-serif;transition:all .2s;margin-bottom:-1px}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--teal);font-weight:500}
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem}
+.card-title{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:1rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1rem}
+.kpi{background:var(--light);border-radius:8px;padding:10px 12px}
+.kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.kpi-value{font-size:18px;font-weight:500}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.chart-wrap{position:relative;height:180px}
+.month-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.input-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.input-group label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.input-group input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text)}
+.input-group input:focus{outline:none;border-color:var(--teal)}
+.period-row{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+.period-row select{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--white)}
+.period-row select:focus{outline:none;border-color:var(--teal)}
+.insights-header{display:flex;justify-content:space-between;align-items:flex-start}
+.gen-btn{padding:8px 16px;background:var(--teal);color:var(--white);border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;margin-left:12px}
+.gen-btn:hover{background:var(--teal-d)}
+.gen-btn:disabled{opacity:.6;cursor:default}
+.insights-box{background:var(--light);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.75;color:var(--text);white-space:pre-wrap;margin-top:14px}
+.api-notice{background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:12px 14px;font-size:13px;color:#92400E;margin-top:14px}
+.client-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.client-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.goal-bar-wrap{margin-bottom:14px}
+.goal-bar-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.goal-bar-bg{height:6px;background:var(--light);border-radius:3px;overflow:hidden}
+.goal-bar-fill{height:100%;border-radius:3px}
+.compare-card{border:1px solid var(--border);border-radius:10px;padding:1rem;background:var(--white);margin-bottom:12px}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.legend-dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px}
+.btn{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid var(--border);background:var(--white);color:var(--text);transition:all .2s}
+.btn:hover{background:var(--light)}
+.btn.teal{background:var(--teal);color:var(--white);border-color:var(--teal)}
+.btn.teal:hover{background:var(--teal-d)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.share-panel{background:var(--light);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem}
+.share-panel textarea{width:100%;font-size:11px;height:52px;font-family:monospace;resize:none;border:1px solid var(--border);border-radius:6px;padding:8px;margin-bottom:10px;box-sizing:border-box}
+.empty{text-align:center;padding:2.5rem;color:var(--muted);font-size:13px}
+@media(max-width:600px){.chart-grid{grid-template-columns:1fr}.input-grid{grid-template-columns:repeat(2,1fr)}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="loading-logo">my<span>Nova</span>Dash</div></div>
+
+<div id="auth-screen" style="display:none">
+  <div class="auth-box">
+    <div class="auth-logo">my<span>Nova</span>Dash</div>
+    <p class="auth-sub" id="auth-sub">Sign in to your account</p>
+    <div class="auth-error" id="auth-error"></div>
+    <div id="name-wrap" style="display:none">
+      <label class="auth-label">Your name</label>
+      <input class="auth-input" id="auth-name" type="text" placeholder="Your name">
+    </div>
+    <label class="auth-label">Email</label>
+    <input class="auth-input" id="auth-email" type="email" placeholder="you@email.com">
+    <label class="auth-label">Password</label>
+    <input class="auth-input" id="auth-pass" type="password" placeholder="••••••••">
+    <button class="auth-btn" id="auth-btn" onclick="handleAuth()">Sign in</button>
+    <div class="auth-switch" id="auth-switch">Don't have an account? <a onclick="toggleAuth()">Sign up</a></div>
+  </div>
+</div>
+
+<div id="app" style="display:none;flex-direction:column;min-height:100vh">
+  <nav>
+    <a class="nav-logo" href="#">my<span>Nova</span>Dash</a>
+    <div class="nav-right">
+      <button class="nav-btn" onclick="toggleShare()">&#128279; Share</button>
+      <button class="nav-btn" id="pdf-btn" onclick="exportPDF()">&#8681; PDF</button>
+      <button class="nav-btn" onclick="doSignOut()">Sign out</button>
+    </div>
+  </nav>
+  <div class="main"><div id="content"></div></div>
+</div>
+
+<script>
+const SB_URL='https://nzccxsbhzovkqojyelxw.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56Y2N4c2Joem92a3FvanllbHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2OTI5MDMsImV4cCI6MjA5NDI2ODkwM30.xraOqLGPoPPA0q4bPwzIoDUR3Xz9Kp-p9A7FuY8sRD4';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const YEARS=[2022,2023,2024,2025,2026];
+const CLR=['#1D9E75','#378ADD','#D85A30','#7F77DD','#BA7517','#D4537E'];
+const DEF={revenue:5000,expenses:900,hours:120,clients:3,projects:4};
+const fmt=n=>'$'+Math.round(n).toLocaleString();
+const fmtR=n=>'$'+Math.round(n)+'/hr';
+const pct=n=>n.toFixed(1)+'%';
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+let user=null,uname='',reports=[],activeId=null,tab='overview',activeMonth=0,showShare=false,compareId=null,charts={},saveTimer=null,authMode='signin';
+
+const getR=()=>reports.find(r=>r.id===activeId)||reports[0]||null;
+const getLabels=(sm,sy,n)=>Array.from({length:n},(_,i)=>{const t=sm+i;return{label:`${MN[t%12]} ${sy+Math.floor(t/12)}`,short:MN[t%12]};});
+const calcAgg=r=>{const md=r.month_data,tR=md.reduce((s,m)=>s+m.revenue,0),tE=md.reduce((s,m)=>s+m.expenses,0),tH=md.reduce((s,m)=>s+m.hours,0),tP=md.reduce((s,m)=>s+m.projects,0),nP=tR-tE;return{totRev:tR,totExp:tE,totHrs:tH,totProj:tP,netP:nP,pMgn:tR>0?nP/tR*100:0,effR:tH>0?tR/tH:0,avgR:tR/md.length};};
+
+function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:''};}
+
+// AUTH
+function toggleAuth(){
+  authMode=authMode==='signin'?'signup':'signin';
+  document.getElementById('auth-sub').textContent=authMode==='signin'?'Sign in to your account':'Create your account';
+  document.getElementById('auth-btn').textContent=authMode==='signin'?'Sign in':'Create account';
+  document.getElementById('auth-switch').innerHTML=authMode==='signin'?"Don't have an account? <a onclick='toggleAuth()'>Sign up</a>":"Already have an account? <a onclick='toggleAuth()'>Sign in</a>";
+  document.getElementById('name-wrap').style.display=authMode==='signup'?'block':'none';
+  document.getElementById('auth-error').style.display='none';
+}
+
+async function handleAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const name=document.getElementById('auth-name').value.trim();
+  const btn=document.getElementById('auth-btn');
+  const err=document.getElementById('auth-error');
+  if(!email||!pass){err.textContent='Please fill in all fields';err.style.display='block';return;}
+  if(authMode==='signup'&&!name){err.textContent='Please enter your name';err.style.display='block';return;}
+  btn.textContent='Loading...';btn.disabled=true;err.style.display='none';
+  if(authMode==='signup'){
+    const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});
+    if(error){err.textContent=error.message;err.style.display='block';btn.textContent='Create account';btn.disabled=false;return;}
+    if(data.user)await initApp(data.user);
+    else{err.textContent='Check your email to confirm your account.';err.style.display='block';btn.textContent='Create account';btn.disabled=false;}
+  }else{
+    const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    if(error){err.textContent='Invalid email or password';err.style.display='block';btn.textContent='Sign in';btn.disabled=false;return;}
+    if(data.user)await initApp(data.user);
+  }
+}
+
+async function doSignOut(){
+  await sb.auth.signOut();
+  user=null;reports=[];activeId=null;destroyCharts();
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('auth-email').value='';
+  document.getElementById('auth-pass').value='';
+  if(authMode!=='signin')toggleAuth();
+}
+
+// INIT
+async function initApp(u){
+  user=u;uname=u.user_metadata?.name||u.email.split('@')[0];
+  await loadReports();
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  render();
+}
+
+// DB
+async function loadReports(){
+  const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');
+  if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}
+  else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:d.month_data,clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||''}));activeId=reports[0].id;}
+}
+
+async function saveToDB(r){
+  const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights};
+  if(r.db_id){await sb.from('reports').update(p).eq('id',r.db_id);}
+  else{const{data}=await sb.from('reports').insert(p).select().single();if(data){r.db_id=data.id;r.id=data.id;}}
+}
+
+function schedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const r=getR();if(r)saveToDB(r);},1000);}
+
+function updR(u){const r=getR();if(!r)return;Object.assign(r,u);schedSave();render();}
+
+async function newReport(){const r=makeReport('Report '+(reports.length+1));reports.push(r);activeId=r.id;await saveToDB(r);activeMonth=0;render();}
+async function delReport(){const r=getR();if(!r||reports.length<=1)return;if(r.db_id)await sb.from('reports').delete().eq('id',r.db_id);reports=reports.filter(x=>x.id!==r.id);activeId=reports[0].id;render();}
+
+// CHARTS
+function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
+function mkChart(id,cfg){if(charts[id]){try{charts[id].destroy();}catch(e){}}const c=document.getElementById(id);if(!c)return;charts[id]=new Chart(c,cfg);}
+
+// RENDER
+function render(){
+  destroyCharts();
+  const r=getR();if(!r)return;
+  const labels=getLabels(r.start_month,r.start_year,r.duration);
+  const agg=calcAgg(r);
+  const{totRev,netP,pMgn,effR,avgR,totProj}=agg;
+  const cTot=r.clients.reduce((s,c)=>s+c.revenue,0);
+  const onTarget=r.month_data.filter(m=>m.revenue>=r.goals.revenue).length;
+  const compR=reports.find(x=>x.id===compareId);
+  const compAgg=compR?calcAgg(compR):null;
+  const apiKey=localStorage.getItem('nd_api_key')||'';
+  const sLabels=labels.map(l=>l.short);
+
+  let h='';
+
+  // Report bar
+  h+=`<div class="report-bar"><span class="report-label">Reports</span>
+    ${reports.map(rep=>`<button class="chip ${rep.id===activeId?'active':''}" onclick="switchR('${rep.id}')">${rep.name}</button>`).join('')}
+    <button class="chip" onclick="newReport()">+ New</button>
+    ${reports.length>1?`<button class="chip" onclick="delReport()" style="color:#EF4444;border-color:#FCA5A5">Delete</button>`:''}
+    <input class="report-name-input" value="${r.name}" onchange="updR({name:this.value})" placeholder="Report name">
+  </div>`;
+
+  // Share panel
+  if(showShare){
+    const code=btoa(JSON.stringify({name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals}));
+    h+=`<div class="share-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <p style="font-size:13px;font-weight:500">Share this report</p>
+        <button class="btn sm" onclick="toggleShare()">Close</button>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Copy this code and share it. Recipients paste it below to import your report.</p>
+      <textarea readonly onclick="this.select()">${code}</textarea>
+      <div style="display:flex;gap:8px">
+        <input id="load-input" type="text" placeholder="Paste share code to import..." style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif">
+        <button class="btn teal sm" onclick="importReport()">Import</button>
+      </div>
+    </div>`;
+  }
+
+  // Header
+  h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;gap:12px">
+    <div style="flex:1;min-width:0">
+      <input value="${r.biz_name}" onchange="updR({biz_name:this.value})" style="font-size:19px;font-weight:500;border:none;background:transparent;color:var(--text);width:100%;padding:0;outline:none;font-family:'Syne',sans-serif">
+      <p style="font-size:12px;color:var(--muted);margin-top:2px">Hi ${uname} &middot; ${labels[0]?.label} &ndash; ${labels[labels.length-1]?.label}</p>
+    </div>
+  </div>`;
+
+  // Tabs
+  h+=`<div class="tabs">${['overview','clients','goals','compare'].map(t=>`<button class="tab-btn ${tab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}</div>`;
+
+  if(tab==='overview'){
+    // Period
+    h+=`<div class="card"><p class="card-title">Report period</p><div class="period-row">
+      <div><label style="display:block;font-size:11px;color:var(--muted);margin-bottom:4px">Start month</label>
+        <select onchange="updR({start_month:parseInt(this.value)})">${MN.map((m,i)=>`<option value="${i}"${r.start_month===i?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div><label style="display:block;font-size:11px;color:var(--muted);margin-bottom:4px">Start year</label>
+        <select onchange="updR({start_year:parseInt(this.value)})">${YEARS.map(y=>`<option value="${y}"${r.start_year===y?' selected':''}>${y}</option>`).join('')}</select></div>
+      <div><label style="display:block;font-size:11px;color:var(--muted);margin-bottom:4px">Duration</label>
+        <div style="display:flex;gap:6px">${[3,6,9,12].map(d=>`<button class="chip ${r.duration===d?'active':''}" onclick="setDur(${d})">${d}mo</button>`).join('')}</div></div>
+    </div></div>`;
+
+    // KPIs
+    h+=`<div class="kpi-grid">${[
+      {l:'Total revenue',v:fmt(totRev),c:'#0F6E56'},{l:'Net profit',v:fmt(netP),c:netP>=0?'#0F6E56':'#DC2626'},
+      {l:'Profit margin',v:pct(pMgn),c:pMgn>=20?'#0F6E56':'#DC2626'},{l:'Effective rate',v:fmtR(effR),c:'#185FA5'},
+      {l:'Avg monthly',v:fmt(avgR),c:'#185FA5'},{l:'Total projects',v:totProj,c:'#5F5E5A'},
+    ].map(k=>`<div class="kpi"><div class="kpi-label">${k.l}</div><div class="kpi-value" style="color:${k.c}">${k.v}</div></div>`).join('')}</div>`;
+
+    // Charts
+    h+=`<div class="chart-grid">
+      <div class="card"><p class="card-title">Revenue vs expenses</p>
+        <div class="legend"><span><span class="legend-dot" style="background:#1D9E75"></span>Revenue</span><span><span class="legend-dot" style="background:#D85A30"></span>Expenses</span></div>
+        <div class="chart-wrap"><canvas id="cRev" role="img" aria-label="Revenue vs expenses">Monthly revenue and expenses.</canvas></div></div>
+      <div class="card"><p class="card-title">Monthly net profit</p>
+        <div class="chart-wrap"><canvas id="cProfit" role="img" aria-label="Monthly net profit">Monthly profit data.</canvas></div></div>
+    </div>`;
+
+    // Editor
+    h+=`<div class="card"><p class="card-title">Edit monthly data</p>
+      <div class="month-chips">${labels.map((l,i)=>`<button class="chip ${activeMonth===i?'active':''}" onclick="setAM(${i})">${l.short}</button>`).join('')}</div>
+      <p style="font-size:11px;font-weight:500;color:var(--muted);margin-bottom:8px">${labels[activeMonth]?.label||''}</p>
+      <div class="input-grid">${[{f:'revenue',l:'Revenue ($)'},{f:'expenses',l:'Expenses ($)'},{f:'hours',l:'Hours'},{f:'clients',l:'Clients'},{f:'projects',l:'Projects'}].map(({f,l})=>`<div class="input-group"><label>${l}</label><input type="number" value="${r.month_data[activeMonth]?.[f]??0}" onchange="updMD(${activeMonth},'${f}',this.value)"></div>`).join('')}
+      </div></div>`;
+
+    // AI
+    h+=`<div class="card"><div class="insights-header">
+      <div><p style="font-size:13px;font-weight:500">AI business insights</p><p style="font-size:12px;color:var(--muted);margin-top:2px">Included in PDF when generated</p></div>
+      <button class="gen-btn" id="gen-btn" onclick="genInsights()"${!apiKey?' disabled':''>${!apiKey?'Add API key below':'Generate insights &#8599;'}</button>
+    </div>
+    ${!apiKey?`<div class="api-notice">To use AI insights, enter your Anthropic API key. <a href="https://console.anthropic.com" target="_blank" style="font-weight:500">Get one free →</a>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="api-input" type="password" placeholder="sk-ant-..." style="flex:1;padding:8px 10px;border:1px solid #FCD34D;border-radius:6px;font-size:13px;font-family:'Inter',sans-serif">
+        <button class="btn sm" onclick="saveKey()" style="background:#92400E;color:#fff;border-color:#92400E">Save</button>
+      </div></div>`:''}
+    ${r.insights?`<div class="insights-box">${r.insights}</div>`:'<div id="ins-out"></div>'}
+    </div>`;
+  }
+
+  if(tab==='clients'){
+    h+=`<div class="card"><p class="card-title">Add client</p>
+      <div style="display:flex;gap:10px;align-items:flex-end">
+        <div style="flex:2"><label style="display:block;font-size:11px;color:var(--muted);margin-bottom:4px">Name</label><input id="cn" type="text" placeholder="Acme Corp" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif"></div>
+        <div style="flex:1"><label style="display:block;font-size:11px;color:var(--muted);margin-bottom:4px">Revenue ($)</label><input id="cr" type="number" value="1000" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif"></div>
+        <button class="btn teal" onclick="addClient()">Add</button>
+      </div></div>`;
+    if(!r.clients.length){h+=`<div class="card"><div class="empty">No clients yet. Add your first client above.</div></div>`;}
+    else{
+      h+=`<div class="chart-grid">
+        <div class="card"><p class="card-title">Revenue by client</p>
+          <div class="legend">${r.clients.map((c,i)=>`<span><span class="legend-dot" style="background:${CLR[i%CLR.length]}"></span>${c.name}</span>`).join('')}</div>
+          <div class="chart-wrap"><canvas id="cClPie" role="img" aria-label="Client revenue">Client revenue breakdown.</canvas></div></div>
+        <div class="card"><p class="card-title">Client list &middot; ${fmt(cTot)} total</p>
+          ${r.clients.map((c,i)=>`<div class="client-row"><span class="client-dot" style="background:${CLR[i%CLR.length]}"></span><span style="flex:1;font-size:13px">${c.name}</span><span style="font-size:13px;font-weight:500">${fmt(c.revenue)}</span><span style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${cTot>0?Math.round(c.revenue/cTot*100):0}%</span><button class="btn sm" onclick="rmClient('${c.id}')" style="color:#EF4444;border-color:#FCA5A5">×</button></div>`).join('')}
+        </div></div>
+      <div class="card"><p class="card-title">Revenue comparison</p><div class="chart-wrap"><canvas id="cClBar" role="img" aria-label="Client bar chart">Client comparison.</canvas></div></div>`;
+    }
+  }
+
+  if(tab==='goals'){
+    h+=`<div class="card"><p class="card-title">Monthly targets</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="input-group"><label>Revenue goal ($/mo)</label><input type="number" value="${r.goals.revenue}" onchange="updR({goals:{...getR().goals,revenue:parseInt(this.value)||0}})"></div>
+        <div class="input-group"><label>Profit goal ($/mo)</label><input type="number" value="${r.goals.profit}" onchange="updR({goals:{...getR().goals,profit:parseInt(this.value)||0}})"></div>
+      </div></div>`;
+    h+=`<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">${[
+      {l:'Months on target',v:`${onTarget} of ${r.duration}`,c:'#0F6E56'},
+      {l:'Avg vs goal',v:r.goals.revenue>0?((avgR-r.goals.revenue)/r.goals.revenue*100).toFixed(1)+'%':'–',c:avgR>=r.goals.revenue?'#0F6E56':'#DC2626'},
+      {l:'Revenue goal',v:fmt(r.goals.revenue)+'/mo',c:'#185FA5'},
+    ].map(k=>`<div class="kpi"><div class="kpi-label">${k.l}</div><div class="kpi-value" style="color:${k.c}">${k.v}</div></div>`).join('')}</div>`;
+    h+=`<div class="card"><p class="card-title">Revenue vs goal</p>
+      <div class="legend"><span><span class="legend-dot" style="background:#1D9E75"></span>Revenue</span><span><span class="legend-dot" style="background:#D85A30"></span>Goal</span></div>
+      <div class="chart-wrap"><canvas id="cGoal" role="img" aria-label="Goals chart">Revenue vs goal.</canvas></div></div>`;
+    h+=`<div class="card"><p class="card-title">Month-by-month tracking</p>
+      ${r.month_data.map((m,i)=>{const ach=r.goals.revenue>0?Math.min(m.revenue/r.goals.revenue,1):1,over=m.revenue>=r.goals.revenue;
+        return`<div class="goal-bar-wrap"><div class="goal-bar-header"><span>${labels[i]?.label||''}</span><span style="font-weight:500;color:${over?'#0F6E56':'#DC2626'}">${fmt(m.revenue)} &middot; ${over?'✓ on target':fmt(m.revenue-r.goals.revenue)+' to go'}</span></div><div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${ach*100}%;background:${over?'#1D9E75':'#D85A30'}"></div></div></div>`;
+      }).join('')}</div>`;
+  }
+
+  if(tab==='compare'){
+    h+=`<div class="card"><p class="card-title">Compare <strong>${r.name}</strong> against:</p>
+      ${!reports.filter(x=>x.id!==activeId).length?'<p style="font-size:13px;color:var(--muted)">Create a second report to compare periods.</p>'
+      :`<div style="display:flex;gap:8px;flex-wrap:wrap">${reports.filter(x=>x.id!==activeId).map(rep=>`<button class="chip ${compareId===rep.id?'active':''}" onclick="setCmp('${rep.id}')">${rep.name}</button>`).join('')}</div>`}
+    </div>`;
+    if(compR&&compAgg){
+      [{l:'Total revenue',a:totRev,b:compAgg.totRev,f:fmt},{l:'Net profit',a:netP,b:compAgg.netP,f:fmt},{l:'Profit margin',a:pMgn,b:compAgg.pMgn,f:v=>v.toFixed(1)+'%'},{l:'Effective rate',a:effR,b:compAgg.effR,f:fmtR}].forEach(({l,a,b,f})=>{
+        const d=a-b,better=d>=0;
+        h+=`<div class="compare-card"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">${l}</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">${r.name}</div><div style="font-size:17px;font-weight:500;color:#1D9E75">${f(a)}</div></div>
+            <div style="text-align:center"><div style="font-size:12px;font-weight:500;color:${better?'#0F6E56':'#DC2626'}">${better?'+':''}${f(d)}</div><div style="font-size:10px;color:var(--muted)">diff</div></div>
+            <div style="text-align:right"><div style="font-size:10px;color:var(--muted);margin-bottom:2px">${compR.name}</div><div style="font-size:17px;font-weight:500;color:#378ADD">${f(b)}</div></div>
+          </div></div>`;
+      });
+      const ml=Math.max(r.duration,compR.duration);
+      h+=`<div class="card"><p class="card-title">Revenue comparison</p>
+        <div class="legend"><span><span class="legend-dot" style="background:#1D9E75"></span>${r.name}</span><span><span class="legend-dot" style="background:#378ADD"></span>${compR.name}</span></div>
+        <div class="chart-wrap"><canvas id="cCmp" role="img" aria-label="Comparison chart">Revenue comparison.</canvas></div></div>`;
+    }
+  }
+
+  document.getElementById('content').innerHTML=h;
+  setTimeout(()=>doCharts(r,agg,compR,compAgg,sLabels),50);
+}
+
+function doCharts(r,agg,compR,compAgg,sl){
+  const chartOpts=(yFmt)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:yFmt},grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}});
+  if(tab==='overview'){
+    mkChart('cRev',{type:'line',data:{labels:sl,datasets:[{label:'Revenue',data:r.month_data.map(m=>m.revenue),borderColor:'#1D9E75',borderWidth:2,pointRadius:0,tension:.4},{label:'Expenses',data:r.month_data.map(m=>m.expenses),borderColor:'#D85A30',borderWidth:2,pointRadius:0,tension:.4}]},options:chartOpts(v=>'$'+Math.round(v/1000)+'k')});
+    mkChart('cProfit',{type:'bar',data:{labels:sl,datasets:[{label:'Profit',data:r.month_data.map(m=>m.revenue-m.expenses),backgroundColor:'#378ADD',borderRadius:3}]},options:chartOpts(v=>'$'+Math.round(v/1000)+'k')});
+  }
+  if(tab==='clients'&&r.clients.length){
+    mkChart('cClPie',{type:'doughnut',data:{labels:r.clients.map(c=>c.name),datasets:[{data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+    mkChart('cClBar',{type:'bar',data:{labels:r.clients.map(c=>c.name),datasets:[{label:'Revenue',data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length),borderRadius:3}]},options:chartOpts(v=>fmt(v))});
+  }
+  if(tab==='goals'){
+    mkChart('cGoal',{type:'bar',data:{labels:sl,datasets:[{label:'Revenue',data:r.month_data.map(m=>m.revenue),backgroundColor:'#1D9E75',borderRadius:3},{label:'Goal',data:r.month_data.map(()=>r.goals.revenue),backgroundColor:'#D85A30',borderRadius:3}]},options:chartOpts(v=>'$'+Math.round(v/1000)+'k')});
+  }
+  if(tab==='compare'&&compR){
+    const ml=Math.max(r.duration,compR.duration);
+    mkChart('cCmp',{type:'line',data:{labels:Array.from({length:ml},(_,i)=>`Mo ${i+1}`),datasets:[{label:r.name,data:Array.from({length:ml},(_,i)=>r.month_data[i]?.revenue??null),borderColor:'#1D9E75',borderWidth:2,pointRadius:0,tension:.4,spanGaps:true},{label:compR.name,data:Array.from({length:ml},(_,i)=>compR.month_data[i]?.revenue??null),borderColor:'#378ADD',borderWidth:2,pointRadius:0,tension:.4,spanGaps:true}]},options:chartOpts(v=>'$'+Math.round(v/1000)+'k')});
+  }
+}
+
+// ACTIONS
+function switchR(id){activeId=id;activeMonth=0;compareId=null;render();}
+function switchTab(t){tab=t;render();}
+function setAM(i){activeMonth=i;render();}
+function setCmp(id){compareId=id;render();}
+function toggleShare(){showShare=!showShare;render();}
+function setDur(d){const r=getR(),cur=r.month_data,nd=d>cur.length?[...cur,...Array.from({length:d-cur.length},()=>({...DEF}))]:cur.slice(0,d);if(activeMonth>=d)activeMonth=d-1;updR({duration:d,month_data:nd});}
+function updMD(i,f,v){const r=getR(),md=[...r.month_data];md[i]={...md[i],[f]:Number(v)||0};updR({month_data:md});}
+function addClient(){const n=document.getElementById('cn')?.value.trim(),rev=Number(document.getElementById('cr')?.value)||0;if(!n)return;const r=getR();updR({clients:[...r.clients,{id:uid(),name:n,revenue:rev}]});}
+function rmClient(id){const r=getR();updR({clients:r.clients.filter(c=>c.id!==id)});}
+function saveKey(){const k=document.getElementById('api-input')?.value.trim();if(!k)return;localStorage.setItem('nd_api_key',k);render();}
+
+async function genInsights(){
+  const r=getR(),key=localStorage.getItem('nd_api_key');if(!key)return;
+  const labels=getLabels(r.start_month,r.start_year,r.duration);
+  const agg=calcAgg(r);const{totRev,netP,pMgn,effR}=agg;
+  const btn=document.getElementById('gen-btn'),out=document.getElementById('ins-out');
+  if(btn){btn.disabled=true;btn.textContent='Analyzing...';}
+  if(out)out.innerHTML='<div class="insights-box">Analyzing your data...</div>';
+  const sum=r.month_data.map((m,i)=>`${labels[i]?.label}: Revenue $${m.revenue}, Expenses $${m.expenses}, Hours ${m.hours}, Projects ${m.projects}`).join('\n');
+  const cSum=r.clients.length?'\nClients: '+r.clients.map(c=>`${c.name} $${c.revenue}`).join(', '):'';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are a sharp freelance business analyst. Return exactly 6 numbered, specific, actionable insights. Be direct, data-driven, include actual numbers. Cover trends, efficiency, pricing, risk, growth. Max 2 sentences each. No preamble.',
+        messages:[{role:'user',content:`Business: ${r.biz_name}\nPeriod: ${labels[0]?.label}–${labels[labels.length-1]?.label}\n${sum}${cSum}\nGoal: $${r.goals.revenue}/mo\nTotals: Revenue ${fmt(totRev)}, Profit ${fmt(netP)}, Margin ${pct(pMgn)}, Rate ${fmtR(effR)}`}]})});
+    const d=await res.json();
+    if(d.error)throw new Error(d.error.message);
+    const text=d.content?.map(b=>b.text||'').join('')||'No insights returned.';
+    updR({insights:text});
+  }catch(e){if(out)out.innerHTML=`<div class="insights-box" style="color:#DC2626">Error: ${e.message}. Please check your API key.</div>`;if(btn){btn.disabled=false;btn.textContent='Generate insights ↗';}}
+}
+
+async function importReport(){
+  const code=document.getElementById('load-input')?.value.trim();if(!code)return;
+  try{const d=JSON.parse(atob(code));const nr={...d,id:uid(),db_id:null,name:(d.name||'Imported')+' (imported)',insights:''};reports.push(nr);activeId=nr.id;await saveToDB(nr);showShare=false;render();}
+  catch{alert('Invalid share code. Please check and try again.');}
+}
+
+async function exportPDF(){
+  const r=getR(),btn=document.getElementById('pdf-btn');
+  if(btn){btn.textContent='...';btn.disabled=true;}
+  try{
+    if(!window.jspdf)await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+    const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,mg=18,cW=W-mg*2,TC=[15,110,86],DK=[28,28,28],MU=[110,110,110];
+    const labels=getLabels(r.start_month,r.start_year,r.duration);
+    const agg=calcAgg(r);const{totRev,netP,pMgn,effR,avgR,totProj}=agg;
+    const period=`${labels[0]?.label} – ${labels[labels.length-1]?.label}`;
+    doc.setFillColor(...TC);doc.rect(0,0,W,40,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');doc.text(r.biz_name||'Freelance Business',mg,17);
+    doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text(`Analytics Report · ${r.name}`,mg,25);doc.text(period,mg,32);
+    doc.text(`${uname} · ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}`,W-mg,32,{align:'right'});
+    let y=50;
+    doc.setTextColor(...DK);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Key performance indicators',mg,y);y+=8;
+    const kI=[['Total Revenue',fmt(totRev)],['Net Profit',fmt(netP)],['Profit Margin',pct(pMgn)],['Effective Rate',fmtR(effR)],['Avg Monthly',fmt(avgR)],['Total Projects',String(totProj)]];
+    const cw2=(cW-4)/2;
+    kI.forEach(([lb,vl],i)=>{const col=i%2,row=Math.floor(i/2),x=mg+col*(cw2+4),ky=y+row*18;doc.setFillColor(245,245,245);doc.roundedRect(x,ky,cw2,15,2,2,'F');doc.setTextColor(...MU);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(lb.toUpperCase(),x+4,ky+6);doc.setTextColor(...DK);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text(vl,x+4,ky+12.5);});
+    y+=Math.ceil(kI.length/2)*18+14;
+    doc.setTextColor(...DK);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Monthly breakdown',mg,y);y+=7;
+    const tC=['Month','Revenue','Expenses','Net Profit','Hours','Rate/Hr','Goal','vs Goal'],tW=[20,25,25,25,18,18,20,19];
+    const sw=tW.map(w=>w*cW/tW.reduce((a,b)=>a+b,0));
+    doc.setFillColor(...TC);doc.rect(mg,y,cW,8,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+    let cx=mg;tC.forEach((c,i)=>{doc.text(c,cx+2,y+5.5);cx+=sw[i];});y+=8;
+    r.month_data.forEach((m,idx)=>{const pr=m.revenue-m.expenses,r2=m.hours>0?Math.round(m.revenue/m.hours):0,vg=r.goals.revenue>0?((m.revenue-r.goals.revenue)/r.goals.revenue*100).toFixed(0)+'%':'–';
+      const cells=[labels[idx]?.short||'',fmt(m.revenue),fmt(m.expenses),fmt(pr),String(m.hours),`$${r2}`,fmt(r.goals.revenue),vg];
+      if(idx%2===0){doc.setFillColor(249,249,249);doc.rect(mg,y,cW,7,'F');}
+      doc.setTextColor(...DK);doc.setFontSize(7.5);doc.setFont('helvetica','normal');cx=mg;cells.forEach((c,i)=>{doc.text(String(c),cx+2,y+5);cx+=sw[i];});y+=7;});
+    y+=12;
+    if(r.clients.length){if(y>240){doc.addPage();y=20;}doc.setTextColor(...DK);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Client breakdown',mg,y);y+=7;
+      const cCols=['Client','Revenue','% of Total'],cW2=[80,50,cW-130];doc.setFillColor(...TC);doc.rect(mg,y,cW,8,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+      cx=mg;cCols.forEach((c,i)=>{doc.text(c,cx+2,y+5.5);cx+=cW2[i];});y+=8;
+      const cTot=r.clients.reduce((s,c)=>s+c.revenue,0);
+      r.clients.forEach((c,i)=>{if(i%2===0){doc.setFillColor(249,249,249);doc.rect(mg,y,cW,7,'F');}doc.setTextColor(...DK);doc.setFontSize(7.5);doc.setFont('helvetica','normal');cx=mg;[c.name,fmt(c.revenue),cTot>0?(c.revenue/cTot*100).toFixed(1)+'%':'0%'].forEach((t,i2)=>{doc.text(t,cx+2,y+5);cx+=cW2[i2];});y+=7;});y+=12;}
+    if(r.insights){if(y>240){doc.addPage();y=20;}doc.setTextColor(...DK);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('AI business insights',mg,y);y+=8;doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);doc.splitTextToSize(r.insights,cW).forEach(line=>{if(y>272){doc.addPage();y=20;}doc.text(line,mg,y);y+=5;});}
+    const pc=doc.internal.getNumberOfPages();for(let p=1;p<=pc;p++){doc.setPage(p);doc.setFillColor(...TC);doc.rect(0,285,W,12,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(`${r.biz_name} · ${r.name}`,mg,292);doc.text(`Page ${p} of ${pc}`,W-mg,292,{align:'right'});}
+    doc.save((r.biz_name||'freelance').toLowerCase().replace(/\s+/g,'-')+'-'+r.name.toLowerCase().replace(/\s+/g,'-')+'.pdf');
+  }catch(e){console.error(e);}
+  if(btn){btn.textContent='⬇ PDF';btn.disabled=false;}
+}
+
+// STARTUP
+window.addEventListener('load',async()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  if(session?.user)await initApp(session.user);
+  else{document.getElementById('auth-screen').style.display='flex';document.getElementById('name-wrap').style.display='none';}
+  document.getElementById('loading').style.display='none';
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen').style.display!=='none')handleAuth();});
+</script>
+</body>
+</html>
