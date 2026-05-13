@@ -15,7 +15,6 @@
 }
 body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
 
-  
 nav{position:sticky;top:0;z-index:100;background:var(--dark);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)}
 .logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--white);text-decoration:none}
 .logo span{color:var(--teal)}
@@ -129,12 +128,11 @@ footer p{font-size:13px;color:rgba(255,255,255,.3)}
   <div class="badge"><span class="badge-dot"></span>Now accepting early access signups</div>
   <h1>Your freelance business,<br><span>built to grow</span></h1>
   <p>Real-time analytics, AI-powered insights, and goal tracking — everything a freelancer or small agency needs to understand and scale their business.</p>
-  <div class="waitlist-form" id="hero-form">
-    <input type="email" placeholder="Enter your email address" id="hero-email">
-    <button class="btn btn-primary" style="padding:13px 22px;font-size:15px" onclick="signup('hero')">Get early access</button>
-  </div>
+  <form action="https://mynovadash.us9.list-manage.com/subscribe/post?u=3290eae4aca25d0b89501da30&amp;id=099e4e0a4a&amp;f_id=00caf3e3f0" method="POST" target="_blank" class="waitlist-form">
+    <input type="email" name="EMAIL" placeholder="Enter your email address" required>
+    <button type="submit" class="btn btn-primary" style="padding:13px 22px;font-size:15px">Get early access</button>
+  </form>
   <p class="hero-note">Free to start &middot; No credit card required</p>
-  <p class="success-msg" id="hero-success">You're on the list. We'll be in touch soon.</p>
 </section>
 
 <div class="stats-bar">
@@ -288,11 +286,10 @@ footer p{font-size:13px;color:rgba(255,255,255,.3)}
   <div class="container">
     <h2 class="section-title">Ready to know your numbers?</h2>
     <p class="section-sub">Join the waitlist today. Early access members get their first month of Pro free at launch.</p>
-    <div class="cta-form" id="cta-form">
-      <input type="email" placeholder="Your email address" id="cta-email">
-      <button class="btn btn-white" style="padding:13px 22px" onclick="signup('cta')">Join waitlist</button>
-    </div>
-    <p class="cta-success" id="cta-success">You're on the list. We'll be in touch soon.</p>
+    <form action="https://mynovadash.us9.list-manage.com/subscribe/post?u=3290eae4aca25d0b89501da30&amp;id=099e4e0a4a&amp;f_id=00caf3e3f0" method="POST" target="_blank" class="cta-form">
+      <input type="email" name="EMAIL" placeholder="Your email address" required>
+      <button type="submit" class="btn btn-white" style="padding:13px 22px">Join waitlist</button>
+    </form>
   </div>
 </section>
 
