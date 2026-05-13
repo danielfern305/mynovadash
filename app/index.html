@@ -307,7 +307,7 @@ function render(){
     // AI
     h+=`<div class="card"><div class="insights-header">
       <div><p style="font-size:13px;font-weight:500">AI business insights</p><p style="font-size:12px;color:var(--muted);margin-top:2px">Included in PDF when generated</p></div>
-      <button class="gen-btn" id="gen-btn" onclick="genInsights()"${!apiKey?' disabled':''>${!apiKey?'Add API key below':'Generate insights &#8599;'}</button>
+      <button class="gen-btn" id="gen-btn" onclick="genInsights()" ${!apiKey?'disabled':''}>${!apiKey?'Add API key below':'Generate insights &#8599;'}</button>
     </div>
     ${!apiKey?`<div class="api-notice">To use AI insights, enter your Anthropic API key. <a href="https://console.anthropic.com" target="_blank" style="font-weight:500">Get one free →</a>
       <div style="display:flex;gap:8px;margin-top:8px">
