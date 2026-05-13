@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myNovaDash — Freelance Analytics Built for Growth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#1D9E75;--teal-d:#0F6E56;--teal-l:#E1F5EE;
+  --dark:#0F1117;--dark2:#1A1D27;
+  --text:#1F2937;--muted:#6B7280;--light:#F9FAFB;--white:#fff;
+}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--white);line-height:1.6}
+
+nav{position:sticky;top:0;z-index:100;background:var(--dark);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--white);text-decoration:none}
+.logo span{color:var(--teal)}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;border:none;font-family:'Inter',sans-serif}
+.btn-primary{background:var(--teal);color:var(--white)}
+.btn-primary:hover{background:var(--teal-d)}
+
+.hero{background:var(--dark);padding:100px 2rem 80px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.3);border-radius:100px;font-size:13px;color:#5DCAA5;margin-bottom:2rem}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(36px,5.5vw,62px);font-weight:800;color:var(--white);line-height:1.08;max-width:680px;margin:0 auto 1.25rem}
+.hero h1 span{color:var(--teal)}
+.hero p{font-size:18px;color:rgba(255,255,255,.5);max-width:480px;margin:0 auto 2.5rem;line-height:1.75}
+.waitlist-form{display:flex;gap:10px;max-width:440px;margin:0 auto 1rem}
+.waitlist-form input{flex:1;padding:13px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:var(--white);font-size:14px;outline:none;font-family:'Inter',sans-serif}
+.waitlist-form input::placeholder{color:rgba(255,255,255,.3)}
+.waitlist-form input:focus{border-color:var(--teal)}
+.hero-note{font-size:13px;color:rgba(255,255,255,.28)}
+.success-msg{display:none;font-size:14px;color:#5DCAA5;margin-top:14px}
+
+.stats-bar{background:var(--dark2);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:1.75rem 2rem;display:flex;justify-content:center;gap:5rem;flex-wrap:wrap}
+.stat-num{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;color:var(--white);text-align:center}
+.stat-label{font-size:13px;color:rgba(255,255,255,.38);text-align:center;margin-top:3px}
+
+section{padding:80px 2rem}
+.container{max-width:960px;margin:0 auto}
+.section-label{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:12px}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.15}
+.section-sub{font-size:17px;color:var(--muted);max-width:500px;line-height:1.75}
+
+.pain{background:var(--light)}
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:3rem}
+.pain-card{background:var(--white);border-radius:12px;padding:1.5rem;border:1px solid #E5E7EB}
+.pain-icon{width:44px;height:44px;border-radius:10px;background:#FEE2E2;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:22px}
+.pain-card h3{font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px}
+.pain-card p{font-size:14px;color:var(--muted);line-height:1.65}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:3rem}
+.feature-card{padding:1.5rem;border:1px solid #E5E7EB;border-radius:12px;background:var(--white)}
+.feature-icon{width:44px;height:44px;border-radius:10px;background:var(--teal-l);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:22px}
+.feature-card h3{font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px}
+.feature-card p{font-size:14px;color:var(--muted);line-height:1.65}
+
+.how{background:var(--dark)}
+.how .section-title{color:var(--white)}
+.how .section-sub{color:rgba(255,255,255,.45)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2.5rem;margin-top:3rem}
+.step{text-align:center}
+.step-num{width:50px;height:50px;border-radius:50%;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.3);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--teal);margin:0 auto 1.25rem}
+.step h3{font-size:15px;font-weight:500;color:var(--white);margin-bottom:8px}
+.step p{font-size:14px;color:rgba(255,255,255,.4);line-height:1.65}
+
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:3rem;align-items:start}
+.pricing-card{border:1px solid #E5E7EB;border-radius:16px;padding:2rem;background:var(--white)}
+.pricing-card.featured{border:2px solid var(--teal)}
+.featured-badge{display:inline-block;padding:4px 12px;background:var(--teal-l);color:var(--teal-d);border-radius:100px;font-size:12px;font-weight:500;margin-bottom:1rem}
+.pricing-name{font-size:18px;font-weight:500;color:var(--text)}
+.price{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:var(--text);line-height:1;margin:.75rem 0 .25rem}
+.price span{font-size:16px;font-weight:400;color:var(--muted)}
+.pricing-desc{font-size:14px;color:var(--muted);margin-bottom:1.5rem}
+.pricing-features{list-style:none;margin-bottom:1.75rem}
+.pricing-features li{font-size:14px;color:var(--muted);padding:7px 0;display:flex;align-items:center;gap:9px;border-bottom:1px solid #F3F4F6}
+.pricing-features li:last-child{border-bottom:none}
+.check{width:18px;height:18px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.pricing-btn{width:100%;text-align:center;padding:12px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;transition:all .2s;border:1px solid #E5E7EB;color:var(--text);background:var(--white);font-family:'Inter',sans-serif}
+.pricing-btn:hover{background:var(--light)}
+.pricing-btn.primary{background:var(--teal);color:var(--white);border-color:var(--teal)}
+.pricing-btn.primary:hover{background:var(--teal-d)}
+
+.cta-section{background:var(--teal);text-align:center}
+.cta-section .section-title{color:var(--white)}
+.cta-section .section-sub{color:rgba(255,255,255,.75);margin:0 auto 2.5rem}
+.cta-form{display:flex;gap:10px;max-width:400px;margin:0 auto}
+.cta-form input{flex:1;padding:13px 16px;border-radius:8px;border:none;background:rgba(255,255,255,.18);color:var(--white);font-size:14px;outline:none;font-family:'Inter',sans-serif}
+.cta-form input::placeholder{color:rgba(255,255,255,.5)}
+.btn-white{background:var(--white);color:var(--teal-d);font-weight:500}
+.btn-white:hover{background:rgba(255,255,255,.9)}
+.cta-success{display:none;font-size:14px;color:rgba(255,255,255,.9);margin-top:1.25rem}
+
+footer{background:var(--dark);padding:2rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+footer p{font-size:13px;color:rgba(255,255,255,.3)}
+.footer-links{display:flex;gap:1.5rem;list-style:none}
+.footer-links a{font-size:13px;color:rgba(255,255,255,.3);text-decoration:none}
+.footer-links a:hover{color:rgba(255,255,255,.6)}
+
+@media(max-width:600px){
+  .nav-links{gap:1rem}
+  .nav-links li:not(:last-child){display:none}
+  .waitlist-form,.cta-form{flex-direction:column}
+  .stats-bar{gap:2rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">my<span>Nova</span>Dash</a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#waitlist" class="btn btn-primary" style="padding:8px 16px">Join waitlist</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="top">
+  <div class="badge"><span class="badge-dot"></span>Now accepting early access signups</div>
+  <h1>Your freelance business,<br><span>built to grow</span></h1>
+  <p>Real-time analytics, AI-powered insights, and goal tracking — everything a freelancer or small agency needs to understand and scale their business.</p>
+  <div class="waitlist-form" id="hero-form">
+    <input type="email" placeholder="Enter your email address" id="hero-email">
+    <button class="btn btn-primary" style="padding:13px 22px;font-size:15px" onclick="signup('hero')">Get early access</button>
+  </div>
+  <p class="hero-note">Free to start &middot; No credit card required</p>
+  <p class="success-msg" id="hero-success">You're on the list. We'll be in touch soon.</p>
+</section>
+
+<div class="stats-bar">
+  <div><div class="stat-num">12mo</div><div class="stat-label">Data range</div></div>
+  <div><div class="stat-num">AI</div><div class="stat-label">Powered insights</div></div>
+  <div><div class="stat-num">PDF</div><div class="stat-label">Shareable reports</div></div>
+  <div><div class="stat-num">$0</div><div class="stat-label">To get started</div></div>
+</div>
+
+<section class="pain">
+  <div class="container">
+    <p class="section-label">The problem</p>
+    <h2 class="section-title">Freelancing without data<br>is flying blind</h2>
+    <p class="section-sub">Most freelancers track income in a spreadsheet — if at all. No clarity on growth, no visibility into what's working, no way to plan ahead.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">📊</div>
+        <h3>No visibility into growth</h3>
+        <p>You're making money but can't tell if you're actually growing month over month or just staying flat.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">💸</div>
+        <h3>Undercharging without knowing it</h3>
+        <p>Without knowing your effective hourly rate, you're probably leaving thousands on the table every single month.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🎯</div>
+        <h3>Goals with no tracking</h3>
+        <p>You set a revenue target in January and forget about it. No way to see if you're on pace or falling behind.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <p class="section-label">The solution</p>
+    <h2 class="section-title">Everything your business<br>needs in one dashboard</h2>
+    <p class="section-sub">myNovaDash turns your raw freelance data into clear, actionable intelligence — so you always know exactly where you stand.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Real-time analytics</h3>
+        <p>Track revenue, expenses, profit margin, effective hourly rate, and more across any custom date range.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI-powered insights</h3>
+        <p>Get six specific, data-driven business insights generated from your actual numbers — not generic advice.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Goal tracking</h3>
+        <p>Set monthly targets and see exactly which months you hit them — with progress bars for every period.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Client breakdown</h3>
+        <p>See which clients drive the most revenue, what percentage each represents, and where you're most exposed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>PDF report export</h3>
+        <p>Generate a polished, branded PDF with all your data and AI insights — ready to share with anyone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>Period comparison</h3>
+        <p>Compare any two report periods side by side to understand exactly how your business is trending over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="container">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Up and running<br>in three steps</h2>
+    <p class="section-sub">No complicated setup. No accountant required. Just your numbers and a few minutes.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Enter your data</h3>
+        <p>Add your monthly revenue, expenses, hours, clients, and projects. Takes under five minutes for a full year.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>See your dashboard</h3>
+        <p>Instantly see your KPIs, profit trends, goal progress, and client breakdown — all calculated automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Get AI insights</h3>
+        <p>Hit generate and get six specific, actionable recommendations for your business based on your actual numbers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <p class="section-label">Pricing</p>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, no annual lock-in.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <p class="pricing-name">Free</p>
+        <div class="price">$0<span>/mo</span></div>
+        <p class="pricing-desc">For freelancers just getting started</p>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span>1 report</li>
+          <li><span class="check">✓</span>Up to 3 months of data</li>
+          <li><span class="check">✓</span>Core KPI dashboard</li>
+          <li><span class="check">✓</span>Goal tracking</li>
+        </ul>
+        <a href="#waitlist" class="pricing-btn">Get started free</a>
+      </div>
+      <div class="pricing-card featured">
+        <span class="featured-badge">Most popular</span>
+        <p class="pricing-name">Pro</p>
+        <div class="price">$12<span>/mo</span></div>
+        <p class="pricing-desc">For serious freelancers ready to grow</p>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span>Unlimited reports</li>
+          <li><span class="check">✓</span>Up to 12 months of data</li>
+          <li><span class="check">✓</span>AI-powered insights</li>
+          <li><span class="check">✓</span>PDF export</li>
+          <li><span class="check">✓</span>Client breakdown</li>
+          <li><span class="check">✓</span>Share codes</li>
+          <li><span class="check">✓</span>Period comparison</li>
+        </ul>
+        <a href="#waitlist" class="pricing-btn primary">Join waitlist</a>
+      </div>
+      <div class="pricing-card">
+        <p class="pricing-name">Agency</p>
+        <div class="price">$29<span>/mo</span></div>
+        <p class="pricing-desc">For small studios and agencies</p>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span>Everything in Pro</li>
+          <li><span class="check">✓</span>Multiple team members</li>
+          <li><span class="check">✓</span>White label PDF reports</li>
+          <li><span class="check">✓</span>Priority support</li>
+        </ul>
+        <a href="#waitlist" class="pricing-btn">Join waitlist</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="waitlist">
+  <div class="container">
+    <h2 class="section-title">Ready to know your numbers?</h2>
+    <p class="section-sub">Join the waitlist today. Early access members get their first month of Pro free at launch.</p>
+    <div class="cta-form" id="cta-form">
+      <input type="email" placeholder="Your email address" id="cta-email">
+      <button class="btn btn-white" style="padding:13px 22px" onclick="signup('cta')">Join waitlist</button>
+    </div>
+    <p class="cta-success" id="cta-success">You're on the list. We'll be in touch soon.</p>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 myNovaDash. All rights reserved.</p>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="mailto:hello@mynovadash.com">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+function signup(id) {
+  const email = document.getElementById(id+'-email').value.trim();
+  const input = document.getElementById(id+'-email');
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = '#EF4444';
+    return;
+  }
+  input.style.borderColor = '';
+  const form = document.getElementById(id+'-form');
+  const success = document.getElementById(id+'-success');
+  if (form) form.style.display = 'none';
+  if (success) success.style.display = 'block';
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
