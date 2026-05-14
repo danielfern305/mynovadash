@@ -6,14 +6,16 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <title>myNovaDash — Freelance Analytics Built for Growth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#09090C;--bg-s:#0F0F14;--bg-c:#141418;--bg-e:#1A1A22;--bd:rgba(255,255,255,0.055);--bd-m:rgba(255,255,255,0.1);--t1:#EEEEF2;--t2:#72728A;--t3:#3A3A50;--blue:#2563EB;--blue-h:#1D4ED8;--blue-s:rgba(37,99,235,0.1);--blue-b:rgba(37,99,235,0.2)}
 body{font-family:'Space Grotesk',sans-serif;color:var(--t1);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
 nav{position:sticky;top:0;z-index:100;background:rgba(9,9,12,0.92);backdrop-filter:blur(12px);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
-.logo{font-size:18px;font-weight:700;color:var(--t1);text-decoration:none;letter-spacing:-.4px}
-.logo span{color:var(--blue)}
+.logo{text-decoration:none;display:flex;align-items:center;gap:10px}
+.wm .m{color:#9090A8;font-weight:300;font-size:11px;letter-spacing:.5px}
+.wm .n{color:var(--blue);font-weight:400;font-size:16px;letter-spacing:-.3px}
+.wm .d{color:#9090A8;font-weight:300;font-size:16px;letter-spacing:-.3px}
 .nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
 .nav-links a{color:var(--t2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
 .nav-links a:hover{color:var(--t1)}
@@ -59,25 +61,53 @@ section{padding:80px 2rem}
 .step-n{font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.875rem;font-family:'JetBrains Mono',monospace}
 .steps h3{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.3px}
 .steps p{font-size:13px;color:var(--t2);line-height:1.65}
-.priceg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;margin-top:3rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden;align-items:start}
-.price-c{background:var(--bg-c);padding:2rem}
-.price-c.feat{background:var(--bg-e)}
-.fp{display:inline-block;padding:3px 10px;background:var(--blue-s);border:1px solid var(--blue-b);border-radius:100px;font-size:11px;color:#93C5FD;margin-bottom:1rem;font-weight:600}
-.pname{font-size:13px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em}
-.pprice{font-size:44px;font-weight:700;color:var(--t1);line-height:1;margin:.75rem 0 .25rem;letter-spacing:-2px;font-family:'JetBrains Mono',monospace}
-.pprice span{font-size:16px;font-weight:400;color:var(--t3);letter-spacing:0}
-.pdesc{font-size:13px;color:var(--t3);margin-bottom:1.5rem}
-.pfl{list-style:none;margin-bottom:1.75rem}
-.pfl li{font-size:13px;color:var(--t2);padding:7px 0;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
-.pfl li:last-child{border-bottom:none}
+
+/* PRICING */
+.pricing-toggle{display:flex;align-items:center;gap:10px;margin-top:1.5rem}
+.toggle-btn{padding:6px 18px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;font-family:'Space Grotesk',sans-serif;border:1px solid var(--bd);background:transparent;color:var(--t2);transition:all .2s}
+.toggle-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:2rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.plan-card{background:var(--bg-c);padding:2rem}
+.plan-card.featured{background:var(--bg-e)}
+.plan-name{font-size:13px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem}
+.plan-price{font-size:44px;font-weight:700;color:var(--t1);line-height:1;letter-spacing:-2px;font-family:'JetBrains Mono',monospace}
+.plan-price span{font-size:16px;font-weight:400;color:var(--t3);letter-spacing:0;font-family:'Space Grotesk',sans-serif}
+.plan-note{font-size:12px;color:var(--t3);margin:.5rem 0 1.25rem;font-weight:500}
+.plan-feats{list-style:none;margin-bottom:1.75rem;border-top:1px solid var(--bd);padding-top:1.25rem}
+.plan-feats li{font-size:13px;color:var(--t2);padding:6px 0;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
+.plan-feats li:last-child{border-bottom:none}
 .ck{font-size:10px;color:var(--blue);font-weight:700;flex-shrink:0;font-family:'JetBrains Mono',monospace}
-.pb{width:100%;text-align:center;padding:11px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:block;transition:all .2s;border:1px solid var(--bd);color:var(--t2);background:transparent;font-family:'Space Grotesk',sans-serif}
-.pb:hover{background:var(--bg-e);color:var(--t1)}
-.pb.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.pb.primary:hover{background:var(--blue-h)}
+.xk{font-size:10px;color:var(--t3);font-weight:700;flex-shrink:0}
+.plan-btn{width:100%;text-align:center;padding:11px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:block;transition:all .2s;border:1px solid var(--bd);color:var(--t2);background:transparent;font-family:'Space Grotesk',sans-serif}
+.plan-btn:hover{background:var(--bg-s);color:var(--t1)}
+.plan-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.plan-btn.primary:hover{background:var(--blue-h)}
+
+/* ANNUAL SECTION */
+.annual-section{background:var(--bg-s);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:60px 2rem}
+.annual-card{background:var(--bg-c);border:1px solid var(--blue-b);border-radius:12px;padding:2.5rem;max-width:700px;margin:2rem auto 0;position:relative;overflow:hidden}
+.annual-card::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(37,99,235,0.06) 0%,transparent 70%);pointer-events:none}
+.annual-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:var(--blue-s);border:1px solid var(--blue-b);border-radius:100px;font-size:11px;color:#93C5FD;font-weight:600;margin-bottom:1.5rem}
+.annual-price-main{font-size:52px;font-weight:700;color:var(--t1);line-height:1;letter-spacing:-2px;font-family:'JetBrains Mono',monospace}
+.annual-price-main span{font-size:18px;font-weight:400;color:var(--t3);letter-spacing:0;font-family:'Space Grotesk',sans-serif}
+.annual-upfront{font-size:14px;color:var(--t2);margin:.5rem 0 .25rem}
+.annual-save{font-size:13px;color:#22C55E;font-weight:600;margin-bottom:2rem}
+.annual-feats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:2rem}
+.annual-feat{font-size:13px;color:var(--t2);display:flex;align-items:center;gap:8px}
+.annual-btn{display:block;text-align:center;padding:13px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'Space Grotesk',sans-serif;transition:background .2s;max-width:300px}
+.annual-btn:hover{background:var(--blue-h)}
+
+/* PRIVACY SECTION */
+.privacy-sec{background:var(--bg-c);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:60px 2rem}
+.privacy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:2.5rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.privacy-item{background:var(--bg-s);padding:1.5rem}
+.privacy-icon{font-size:20px;margin-bottom:.75rem}
+.privacy-item h3{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.privacy-item p{font-size:13px;color:var(--t2);line-height:1.65}
+
 .cta-sec{background:var(--bg-s);text-align:center;border-top:1px solid var(--bd)}
 .cf{display:flex;gap:8px;max-width:400px;margin:0 auto}
-.cf input{flex:1;padding:12px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--bg-c);color:var(--t1);font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;transition:border-color .2s}
+.cf input{flex:1;padding:12px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--bg-c);color:var(--t1);font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif}
 .cf input:focus{border-color:var(--blue)}
 .cf input::placeholder{color:var(--t3)}
 .cf button{padding:12px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .2s;white-space:nowrap}
@@ -85,39 +115,50 @@ section{padding:80px 2rem}
 footer{background:var(--bg);border-top:1px solid var(--bd);padding:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 footer p{font-size:12px;color:var(--t3)}
 .fl{display:flex;gap:1.5rem;list-style:none}
-.fl a{font-size:12px;color:var(--t3);text-decoration:none;transition:color .2s}
+.fl a{font-size:12px;color:var(--t3);text-decoration:none}
 .fl a:hover{color:var(--t2)}
-@media(max-width:600px){.nav-links li:not(:last-child){display:none}.hf,.cf{flex-direction:column}.stats{gap:2rem}}
+@media(max-width:700px){.nav-links li:not(:last-child){display:none}.hf,.cf{flex-direction:column}.stats{gap:2rem}.plans-grid{grid-template-columns:1fr}.annual-feats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <nav>
-  <a href="#" style="text-decoration:none;display:flex;align-items:center;gap:10px">   <svg width="30" height="27" viewBox="0 0 40 36" fill="none" aria-hidden="true">     <line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/>     <path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/>     <polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>     <line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/>     <circle cx="38" cy="3" r="2.5" fill="#2563EB"/>   </svg>   <div style="line-height:1;display:flex;align-items:baseline">     <span style="color:#9090A8;font-weight:300;font-size:11px;letter-spacing:.5px">my</span>     <span style="color:#2563EB;font-weight:400;font-size:16px;letter-spacing:-.3px">Nova</span>     <span style="color:#9090A8;font-weight:300;font-size:16px;letter-spacing:-.3px">Dash</span>   </div> </a>
+  <a href="#" class="logo">
+    <svg width="30" height="27" viewBox="0 0 40 36" fill="none" aria-hidden="true">
+      <line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/>
+      <path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/>
+      <polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="38" cy="3" r="2.5" fill="#2563EB"/>
+    </svg>
+    <div class="wm" style="line-height:1;display:flex;align-items:baseline">
+      <span class="m">my</span><span class="n">Nova</span><span class="d">Dash</span>
+    </div>
+  </a>
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
-    <li><a href="#how">How it works</a></li>
     <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#privacy-sec">Privacy</a></li>
     <li><a href="/signin">Sign in</a></li>
-    <li><a href="#waitlist" class="nav-cta">Join waitlist</a></li>
+    <li><a href="#waitlist" class="nav-cta">Get started</a></li>
   </ul>
 </nav>
 
 <section class="hero" id="top">
-  <div class="badge"><span class="badge-dot"></span>Early access open now</div>
+  <div class="badge"><span class="badge-dot"></span>Now accepting signups</div>
   <h1>Your freelance business,<br><span>built to grow</span></h1>
   <p>Real-time analytics, AI-powered insights, and goal tracking — everything a freelancer needs to understand and scale their business.</p>
   <form action="https://mynovadash.us9.list-manage.com/subscribe/post?u=3290eae4aca25d0b89501da30&amp;id=099e4e0a4a&amp;f_id=00caf3e3f0" method="POST" target="_blank" class="hf">
     <input type="email" name="EMAIL" placeholder="Enter your email address" required>
     <button type="submit">Get early access</button>
   </form>
-  <p class="hero-note">Free to start &middot; No credit card required</p>
+  <p class="hero-note">First month free on Basic &middot; No credit card required</p>
 </section>
 
 <div class="stats">
   <div><div class="sn">12mo</div><div class="sl">Data range</div></div>
   <div><div class="sn">AI</div><div class="sl">Powered insights</div></div>
   <div><div class="sn">PDF</div><div class="sl">Shareable reports</div></div>
-  <div><div class="sn">$0</div><div class="sl">To get started</div></div>
+  <div><div class="sn">100%</div><div class="sl">Data privacy</div></div>
 </div>
 
 <section class="pain">
@@ -128,7 +169,7 @@ footer p{font-size:12px;color:var(--t3)}
     <div class="pg">
       <div class="pc"><div class="pn">01</div><h3>No visibility into growth</h3><p>You're making money but can't tell if you're actually growing month over month or just staying flat.</p></div>
       <div class="pc"><div class="pn">02</div><h3>Undercharging without knowing it</h3><p>Without knowing your effective hourly rate, you're leaving thousands on the table every single month.</p></div>
-      <div class="pc"><div class="pn">03</div><h3>Goals with no tracking</h3><p>You set a revenue target in January and forget about it. No way to see if you're on pace or falling behind.</p></div>
+      <div class="pc"><div class="pn">03</div><h3>Tax season blindsides you</h3><p>No tracking means no planning. Every quarter is a surprise. Every April is a panic.</p></div>
     </div>
   </div>
 </section>
@@ -140,11 +181,11 @@ footer p{font-size:12px;color:var(--t3)}
     <p class="sec-sub">myNovaDash turns your raw freelance data into clear, actionable intelligence.</p>
     <div class="fg">
       <div class="fc"><div class="ft">Analytics</div><h3>Real-time dashboard</h3><p>Track revenue, expenses, profit margin, effective hourly rate, and more across any custom date range.</p></div>
-      <div class="fc"><div class="ft">AI</div><h3>Business insights</h3><p>Six specific, data-driven insights generated from your actual numbers — not generic advice.</p></div>
+      <div class="fc"><div class="ft">AI</div><h3>Business insights</h3><p>Six specific, data-driven insights generated from your actual numbers — plus trend prediction showing projected revenue next month.</p></div>
+      <div class="fc"><div class="ft">Tax</div><h3>Tax estimator</h3><p>Know exactly what you owe each quarter based on your state, filing status, and net profit — before the deadline hits.</p></div>
       <div class="fc"><div class="ft">Goals</div><h3>Goal tracking</h3><p>Set monthly targets and see exactly which months you hit them — with progress bars for every period.</p></div>
-      <div class="fc"><div class="ft">Clients</div><h3>Client breakdown</h3><p>See which clients drive the most revenue and where you're most exposed to churn risk.</p></div>
+      <div class="fc"><div class="ft">Import</div><h3>Import external data</h3><p>Upload any Excel, CSV, PDF, or Word file. Claude reads it, extracts your data, and populates your dashboard automatically.</p></div>
       <div class="fc"><div class="ft">Export</div><h3>PDF reports</h3><p>Generate a polished, branded PDF with all your data and AI insights — ready to share with anyone.</p></div>
-      <div class="fc"><div class="ft">Compare</div><h3>Period comparison</h3><p>Compare any two report periods side by side to understand exactly how your business is trending.</p></div>
     </div>
   </div>
 </section>
@@ -155,44 +196,118 @@ footer p{font-size:12px;color:var(--t3)}
     <h2 class="sec-title">Up and running<br>in three steps</h2>
     <p class="sec-sub">No complicated setup. No accountant required. Just your numbers and a few minutes.</p>
     <div class="steps">
-      <div><div class="step-n">Step 01</div><h3>Enter your data</h3><p>Add your monthly revenue, expenses, hours, clients, and projects. Under five minutes for a full year.</p></div>
-      <div><div class="step-n">Step 02</div><h3>See your dashboard</h3><p>Instantly see your KPIs, profit trends, goal progress, and client breakdown — all calculated automatically.</p></div>
-      <div><div class="step-n">Step 03</div><h3>Get AI insights</h3><p>Generate six specific, actionable recommendations for your business based on your actual numbers.</p></div>
+      <div><div class="step-n">Step 01</div><h3>Enter your data</h3><p>Add your monthly revenue, expenses, hours, clients, and projects — or import directly from an existing file.</p></div>
+      <div><div class="step-n">Step 02</div><h3>See your dashboard</h3><p>Instantly see your KPIs, profit trends, goal progress, and tax estimates — all calculated automatically.</p></div>
+      <div><div class="step-n">Step 03</div><h3>Get AI insights</h3><p>Generate six specific, actionable recommendations and a projected revenue forecast based on your actual numbers.</p></div>
     </div>
   </div>
 </section>
 
+<!-- PRICING -->
 <section id="pricing">
   <div class="container">
     <p class="sec-label">Pricing</p>
     <h2 class="sec-title">Simple, transparent pricing</h2>
-    <p class="sec-sub">Start free. Upgrade when you're ready. No hidden fees, no annual lock-in.</p>
-    <div class="priceg">
-      <div class="price-c">
-        <p class="pname">Free</p>
-        <div class="pprice">$0<span>/mo</span></div>
-        <p class="pdesc">For freelancers just getting started</p>
-        <ul class="pfl"><li><span class="ck">✓</span>1 report</li><li><span class="ck">✓</span>Up to 3 months of data</li><li><span class="ck">✓</span>Core KPI dashboard</li><li><span class="ck">✓</span>Goal tracking</li></ul>
-        <a href="/app" class="pb">Get started free</a>
+    <p class="sec-sub">Start with a free first month. Upgrade when you're ready. No hidden fees.</p>
+
+    <div class="plans-grid">
+      <div class="plan-card">
+        <p class="plan-name">Basic</p>
+        <div class="plan-price">$20<span>/mo</span></div>
+        <p class="plan-note">First month free — no credit card required</p>
+        <ul class="plan-feats">
+          <li><span class="ck">✓</span>Up to 3 reports</li>
+          <li><span class="ck">✓</span>6 months of data</li>
+          <li><span class="ck">✓</span>Core KPI dashboard</li>
+          <li><span class="ck">✓</span>Goal tracking</li>
+          <li><span class="ck">✓</span>Period comparison</li>
+          <li><span class="ck">✓</span>PDF export</li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Client breakdown</span></li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">AI insights</span></li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Import external data</span></li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Tax estimator</span></li>
+        </ul>
+        <a href="/app" class="plan-btn">Start free month →</a>
       </div>
-      <div class="price-c feat">
-        <span class="fp">Most popular</span>
-        <p class="pname">Pro</p>
-        <div class="pprice">$12<span>/mo</span></div>
-        <p class="pdesc">For serious freelancers ready to grow</p>
-        <ul class="pfl"><li><span class="ck">✓</span>Unlimited reports</li><li><span class="ck">✓</span>Up to 12 months of data</li><li><span class="ck">✓</span>AI-powered insights</li><li><span class="ck">✓</span>PDF export</li><li><span class="ck">✓</span>Client breakdown</li><li><span class="ck">✓</span>Share codes</li><li><span class="ck">✓</span>Period comparison</li></ul>
-        <a href="/app" class="pb primary">Join waitlist</a>
-      </div>
-      <div class="price-c">
-        <p class="pname">Agency</p>
-        <div class="pprice">$29<span>/mo</span></div>
-        <p class="pdesc">For small studios and agencies</p>
-        <ul class="pfl"><li><span class="ck">✓</span>Everything in Pro</li><li><span class="ck">✓</span>Multiple team members</li><li><span class="ck">✓</span>White label PDF reports</li><li><span class="ck">✓</span>Priority support</li></ul>
-        <a href="/app" class="pb">Join waitlist</a>
+      <div class="plan-card featured">
+        <p class="plan-name">Pro — Monthly</p>
+        <div class="plan-price">$40<span>/mo</span></div>
+        <p class="plan-note">Billed monthly &middot; Cancel anytime</p>
+        <ul class="plan-feats">
+          <li><span class="ck">✓</span>Unlimited reports</li>
+          <li><span class="ck">✓</span>12 months of data</li>
+          <li><span class="ck">✓</span>Core KPI dashboard</li>
+          <li><span class="ck">✓</span>Goal tracking</li>
+          <li><span class="ck">✓</span>Period comparison</li>
+          <li><span class="ck">✓</span>PDF export</li>
+          <li><span class="ck">✓</span>Client breakdown</li>
+          <li><span class="ck">✓</span>AI insights + trend prediction</li>
+          <li><span class="ck">✓</span>Import external data</li>
+          <li><span class="ck">✓</span>Tax estimator</li>
+          <li><span class="ck">✓</span>Share codes</li>
+          <li><span class="ck">✓</span>Notes per month</li>
+        </ul>
+        <a href="/app" class="plan-btn primary">Get started →</a>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ANNUAL SECTION -->
+<div class="annual-section" id="annual">
+  <div class="container">
+    <p class="sec-label">Pro Annual — Best value</p>
+    <h2 class="sec-title">Commit annually,<br>pay less every month</h2>
+    <div class="annual-card">
+      <span class="annual-badge">⚡ Most popular</span>
+      <div class="annual-price-main">$30<span>/month</span></div>
+      <p class="annual-upfront">$360 billed upfront</p>
+      <p class="annual-save">Saves you $10/month — $120/year — compared to monthly Pro</p>
+      <div class="annual-feats">
+        <div class="annual-feat"><span class="ck">✓</span>Everything in Pro</div>
+        <div class="annual-feat"><span class="ck">✓</span>Unlimited reports</div>
+        <div class="annual-feat"><span class="ck">✓</span>AI insights + prediction</div>
+        <div class="annual-feat"><span class="ck">✓</span>Tax estimator</div>
+        <div class="annual-feat"><span class="ck">✓</span>Import external data</div>
+        <div class="annual-feat"><span class="ck">✓</span>Client breakdown</div>
+        <div class="annual-feat"><span class="ck">✓</span>12 months data range</div>
+        <div class="annual-feat"><span class="ck">✓</span>Priority support</div>
+      </div>
+      <a href="/app" class="annual-btn">Get Pro Annual →</a>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY SECTION -->
+<div class="privacy-sec" id="privacy-sec">
+  <div class="container">
+    <p class="sec-label">Privacy first</p>
+    <h2 class="sec-title">Your data stays yours.<br>Always.</h2>
+    <p class="sec-sub">We built myNovaDash with privacy at the core. No selling data, no sharing, no exceptions.</p>
+    <div class="privacy-grid">
+      <div class="privacy-item">
+        <div class="privacy-icon">🔒</div>
+        <h3>Your API key never leaves your device</h3>
+        <p>When you use AI features, your Anthropic API key is stored only in your browser. We never see it, never store it on our servers. Every AI request goes directly from your browser to Anthropic — we're never in the middle.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🚫</div>
+        <h3>We never sell your data</h3>
+        <p>Your financial data is yours. We don't sell it, share it with advertisers, or use it for any purpose other than providing you the service. No data brokers. No exceptions.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🤖</div>
+        <h3>Not used to train AI</h3>
+        <p>Your business data is never used to train AI models. What you put in stays private. We take this seriously and build it into how the product works technically, not just as a policy promise.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🏦</div>
+        <h3>Bank-grade data security</h3>
+        <p>All data is encrypted in transit and at rest. Row-level database security means your data is only ever accessible by your account. No one else — not even us — can access your reports.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="cta-sec" id="waitlist">
   <div class="container">
@@ -207,7 +322,11 @@ footer p{font-size:12px;color:var(--t3)}
 
 <footer>
   <p>&copy; 2025 myNovaDash. All rights reserved.</p>
-  <ul class="fl"><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="mailto:hello@mynovadash.com">Contact</a></li></ul>
+  <ul class="fl">
+    <li><a href="/privacy">Privacy</a></li>
+    <li><a href="/terms">Terms</a></li>
+    <li><a href="mailto:hello@mynovadash.com">Contact</a></li>
+  </ul>
 </footer>
 
 <script>
