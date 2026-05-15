@@ -241,11 +241,12 @@ const _now=new Date();
 let calMonth=_now.getMonth(),calYear=_now.getFullYear(),calSelectedDay=null;
 let showMonthPicker=false,pickerYear=_now.getFullYear();
 let calInsights='',calInsightsLoading=false;
+let showInvoiceForm=false,payingInvoiceId=null,payingDate=new Date().toISOString().split('T')[0];
 
 const getR=()=>reports.find(r=>r.id===activeId)||reports[0]||null;
 const getLabels=(sm,sy,n)=>Array.from({length:n},(_,i)=>{const t=sm+i;return{label:`${MN[t%12]} ${sy+Math.floor(t/12)}`,short:MN[t%12]};});
 const calcAgg=r=>{const md=r.month_data,tR=md.reduce((s,m)=>s+m.revenue,0),tE=md.reduce((s,m)=>s+m.expenses,0),tH=md.reduce((s,m)=>s+m.hours,0),tP=md.reduce((s,m)=>s+m.projects,0),nP=tR-tE;return{totRev:tR,totExp:tE,totHrs:tH,totProj:tP,netP:nP,pMgn:tR>0?nP/tR*100:0,effR:tH>0?tR/tH:0,avgR:tR/md.length};};
-function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:'',daily_data:{},profile:{type:'',industry:'',pricing:'',description:'',experience:'',team:''}};}
+function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:'',daily_data:{},profile:{type:'',industry:'',pricing:'',description:'',experience:'',team:''},invoices:[]};}
 
 // TAX
 function calcFederalTax(income,status){const ded=status==='married'?29200:14600,taxable=Math.max(0,income-ded),brackets=status==='married'?[[23200,.10],[94300,.12],[201050,.22],[383900,.24],[487450,.32],[731200,.35],[Infinity,.37]]:[[11600,.10],[47150,.12],[100525,.22],[191950,.24],[243725,.32],[609350,.35],[Infinity,.37]];let tax=0,prev=0;for(const[limit,rate]of brackets){if(taxable<=prev)break;tax+=(Math.min(taxable,limit)-prev)*rate;prev=limit;}return tax;}
@@ -452,6 +453,71 @@ function renderCalendarTab(r,p1,p2){
   return h;
 }
 
+
+// INVOICES
+function getInvoiceStatus(inv){if(inv.status==='paid')return'paid';const t=new Date();t.setHours(0,0,0,0);const d=new Date(inv.due_date+'T00:00:00');return d<t?'overdue':'unpaid';}
+function addInvoice(){const cl=document.getElementById('inv-client')?.value.trim(),am=Number(document.getElementById('inv-amount')?.value)||0,desc=document.getElementById('inv-desc')?.value.trim()||'',id=document.getElementById('inv-date')?.value,dd=document.getElementById('inv-due')?.value;if(!cl||!am||!id||!dd){alert('Please fill in client, amount, invoice date and due date.');return;}const r=getR();if(!r)return;updR({invoices:[...(r.invoices||[]),{id:uid(),client:cl,amount:am,description:desc,invoice_date:id,due_date:dd,paid_date:null,status:'unpaid'}]});showInvoiceForm=false;}
+function deleteInvoice(id){if(!confirm('Delete this invoice?'))return;const r=getR();if(!r)return;updR({invoices:(r.invoices||[]).filter(i=>i.id!==id)});}
+function startMarkPaid(id){payingInvoiceId=id;payingDate=new Date().toISOString().split('T')[0];render();}
+function confirmMarkPaid(){
+  const r=getR();if(!r)return;
+  const inv=(r.invoices||[]).find(i=>i.id===payingInvoiceId);if(!inv||!payingDate)return;
+  const invoices=(r.invoices||[]).map(i=>i.id===payingInvoiceId?{...i,status:'paid',paid_date:payingDate}:i);
+  const pts=payingDate.split('-'),py=parseInt(pts[0]),pm=parseInt(pts[1])-1,pd=parseInt(pts[2]);
+  const k=dayKey(py,pm,pd),ex=r.daily_data?.[k]||{revenue:0,expenses:0,hours:0,note:'',projected:false};
+  const note=ex.note?ex.note+' | Invoice: '+inv.client:'Invoice paid: '+inv.client;
+  const daily_data={...r.daily_data,[k]:{...ex,revenue:(ex.revenue||0)+inv.amount,note,projected:false}};
+  payingInvoiceId=null;updR({invoices,daily_data});
+}
+function calcAvgCollection(invs){const paid=invs.filter(i=>i.status==='paid'&&i.paid_date&&i.invoice_date);if(!paid.length)return null;const tot=paid.reduce((s,i)=>{const a=new Date(i.invoice_date+'T00:00:00'),b=new Date(i.paid_date+'T00:00:00');return s+Math.max(0,(b-a)/(86400000));},0);return Math.round(tot/paid.length);}
+function renderInvoicesTab(r,p1,p2){
+  const invs=r.invoices||[];
+  const totInv=invs.reduce((s,i)=>s+i.amount,0);
+  const totPaid=invs.filter(i=>i.status==='paid').reduce((s,i)=>s+i.amount,0);
+  const totOut=invs.filter(i=>getInvoiceStatus(i)!=='paid').reduce((s,i)=>s+i.amount,0);
+  const overdue=invs.filter(i=>getInvoiceStatus(i)==='overdue');
+  const totOvr=overdue.reduce((s,i)=>s+i.amount,0);
+  const avgColl=calcAvgCollection(invs);
+  let h='';
+  h+=`<div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:1rem">${[{l:'Total invoiced',v:fmt(totInv),c:'var(--t1)'},{l:'Total paid',v:fmt(totPaid),c:'var(--ok)'},{l:'Outstanding',v:fmt(totOut),c:totOut>0?'var(--warn)':'var(--t2)'},{l:'Avg collection',v:avgColl!==null?avgColl+'d':'—',c:'var(--t2)'}].map(k=>`<div class="kpi"><div class="kpi-l">${k.l}</div><div class="kpi-v" style="color:${k.c};font-size:18px">${k.v}</div></div>`).join('')}</div>`;
+  if(overdue.length)h+=`<div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:12px 16px;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center"><div><p style="font-size:13px;font-weight:600;color:var(--err)">⚠️ ${overdue.length} overdue invoice${overdue.length>1?'s':''}</p><p style="font-size:12px;color:var(--t2);margin-top:2px">Total overdue: ${fmt(totOvr)}</p></div></div>`;
+  h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem"><p style="font-size:13px;font-weight:600;color:var(--t1)">${invs.length} invoice${invs.length!==1?'s':''}</p><button class="btn blue" onclick="showInvoiceForm=!showInvoiceForm;render()">+ Add invoice</button></div>`;
+  if(showInvoiceForm){const td=new Date().toISOString().split('T')[0],dd=new Date(Date.now()+30*86400000).toISOString().split('T')[0];h+=`<div class="card" style="margin-bottom:1rem;animation:fade .2s ease"><p class="ct">New invoice</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div><label class="al">Client name</label><input id="inv-client" class="di" placeholder="Acme Corp"></div><div><label class="al">Amount ($)</label><input id="inv-amount" type="number" class="nim" placeholder="0"></div><div><label class="al">Invoice date</label><input id="inv-date" type="date" class="di" value="${td}"></div><div><label class="al">Due date</label><input id="inv-due" type="date" class="di" value="${dd}"></div></div><div style="margin-bottom:12px"><label class="al">Description (optional)</label><input id="inv-desc" class="di" placeholder="e.g. Website redesign, Monthly retainer..."></div><div style="display:flex;gap:8px"><button class="btn blue" onclick="addInvoice()">Add invoice</button><button class="btn" onclick="showInvoiceForm=false;render()">Cancel</button></div></div>`;}
+  if(!invs.length){h+=`<div class="card"><div class="empty">No invoices yet. Add your first invoice above.</div></div>`;}
+  else{
+    const sorted=[...invs].sort((a,b)=>{const o={overdue:0,unpaid:1,paid:2};return(o[getInvoiceStatus(a)]||0)-(o[getInvoiceStatus(b)]||0);});
+    sorted.forEach(inv=>{
+      const st=getInvoiceStatus(inv);
+      const sc={paid:'var(--ok)',unpaid:'var(--p1)',overdue:'var(--err)'};
+      const sb={paid:'rgba(34,197,94,.1)',unpaid:'var(--p1s)',overdue:'rgba(239,68,68,.1)'};
+      const isPaying=payingInvoiceId===inv.id;
+      h+=`<div class="card" style="margin-bottom:.75rem"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><p style="font-size:15px;font-weight:600;color:var(--t1)">${inv.client}</p><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;background:${sb[st]};color:${sc[st]}">${st}</span></div>${inv.description?`<p style="font-size:12px;color:var(--t3)">${inv.description}</p>`:''}</div><p style="font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${sc[st]}">${fmt(inv.amount)}</p></div><div style="display:flex;gap:1.5rem;font-size:12px;color:var(--t3);margin-bottom:12px"><span>Sent: ${inv.invoice_date}</span><span>Due: ${inv.due_date}</span>${inv.paid_date?`<span style="color:var(--ok)">Paid: ${inv.paid_date}</span>`:''}</div>${isPaying?`<div style="display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--bg-e);border-radius:7px;margin-bottom:10px"><span style="font-size:12px;color:var(--t2);font-weight:500">Payment date:</span><input type="date" class="di" style="width:auto;padding:5px 8px;font-size:12px" value="${payingDate}" onchange="payingDate=this.value"><button class="btn blue sm" onclick="confirmMarkPaid()">Confirm ✓</button><button class="btn sm" onclick="payingInvoiceId=null;render()">Cancel</button></div>`:''}<div style="display:flex;gap:6px">${st!=='paid'?`<button class="btn sm" onclick="startMarkPaid('${inv.id}')" style="color:var(--ok);border-color:rgba(34,197,94,.2)">Mark paid →</button>`:''}<button class="btn sm" onclick="deleteInvoice('${inv.id}')" style="color:var(--err);border-color:rgba(239,68,68,.2)">Delete</button></div></div>`;
+    });
+  }
+  return h;
+}
+
+// MILESTONES
+const MS_KEY='nd_milestones';
+function getSeenMS(){try{return new Set(JSON.parse(localStorage.getItem(MS_KEY)||'[]'));}catch{return new Set();}}
+function markSeenMS(key){const s=getSeenMS();s.add(key);localStorage.setItem(MS_KEY,JSON.stringify([...s]));}
+function dismissMS(key){markSeenMS(key);render();}
+function checkMilestones(r){
+  const result=[],seen=getSeenMS();
+  if(!r.month_data.length)return result;
+  const labels=getLabels(r.start_month,r.start_year,r.duration);
+  const revs=r.month_data.map(m=>m.revenue);
+  const maxRev=Math.max(...revs);
+  const lastIdx=revs.length-1;
+  const lastRev=revs[lastIdx];
+  const lastLabel=labels[lastIdx]?.label||'';
+  if(lastRev>0&&lastRev>=maxRev&&revs.length>1){const k='best_'+lastLabel;if(!seen.has(k))result.push({key:k,emoji:'🚀',msg:`${lastLabel} is your best month ever at ${fmt(lastRev)}!`});}
+  if(r.goals.revenue>0&&lastRev>=r.goals.revenue){const k='goal_'+lastLabel;if(!seen.has(k))result.push({key:k,emoji:'🎯',msg:`You hit your ${fmt(r.goals.revenue)}/mo goal in ${lastLabel}!`});}
+  let streak=0;for(let i=lastIdx;i>=0;i--){if(r.goals.revenue>0&&revs[i]>=r.goals.revenue)streak++;else break;}
+  if(streak>=3){const k='streak_'+streak+'_'+lastLabel;if(!seen.has(k))result.push({key:k,emoji:'🔥',msg:`${streak} months in a row hitting your goal. You're on a streak!`});}
+  return result;
+}
+
 // AUTH
 function toggleAuth(){authMode=authMode==='signin'?'signup':'signin';document.getElementById('auth-sub').textContent=authMode==='signin'?'Sign in to your account':'Create your account';document.getElementById('auth-btn').textContent=authMode==='signin'?'Sign in':'Create account';document.getElementById('auth-switch').innerHTML=authMode==='signin'?"Don't have an account? <a onclick='toggleAuth()'>Sign up</a>":"Already have an account? <a onclick='toggleAuth()'>Sign in</a>";document.getElementById('name-wrap').style.display=authMode==='signup'?'block':'none';document.getElementById('auth-error').style.display='none';}
 async function handleAuth(){const email=document.getElementById('auth-email').value.trim(),pass=document.getElementById('auth-pass').value,name=document.getElementById('auth-name').value.trim(),btn=document.getElementById('auth-btn'),err=document.getElementById('auth-error');if(!email||!pass){err.textContent='Please fill in all fields';err.style.display='block';return;}if(authMode==='signup'&&!name){err.textContent='Please enter your name';err.style.display='block';return;}btn.textContent='Loading...';btn.disabled=true;err.style.display='none';if(authMode==='signup'){const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name}}});if(error){err.textContent=error.message;err.style.display='block';btn.textContent='Create account';btn.disabled=false;return;}if(data.user)await initApp(data.user);else{err.textContent='Check your email to confirm.';err.style.display='block';btn.textContent='Create account';btn.disabled=false;}}else{const{data,error}=await sb.auth.signInWithPassword({email,password:pass});if(error){err.textContent='Invalid email or password';err.style.display='block';btn.textContent='Sign in';btn.disabled=false;return;}if(data.user)await initApp(data.user);}}
@@ -578,10 +644,21 @@ function render(){
   if(showShare){const code=btoa(JSON.stringify({name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals}));h+=`<div class="sp"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><p style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em">Share report</p><button class="btn sm" onclick="toggleShare()">Close</button></div><textarea readonly onclick="this.select()">${code}</textarea><div style="display:flex;gap:8px"><input id="load-input" type="text" placeholder="Paste share code to import..." class="di" style="flex:1"><button class="btn blue sm" onclick="importReport()">Import</button></div></div>`;}
 
   h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;gap:12px"><div style="flex:1;min-width:0"><input value="${r.biz_name}" onchange="updR({biz_name:this.value})" style="font-size:20px;font-weight:700;border:none;background:transparent;color:var(--t1);width:100%;padding:0;outline:none;font-family:'Space Grotesk',sans-serif;letter-spacing:-.5px"><p style="font-size:11px;color:var(--t3);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">${uname}&nbsp;&nbsp;·&nbsp;&nbsp;${labels[0]?.label} — ${labels[labels.length-1]?.label}</p></div></div>`;
-  h+=`<div class="tabs">${['overview','calendar','clients','goals','compare','tools'].map(t=>`<button class="tab-btn ${tab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}</div>`;
+  h+=`<div class="tabs">${['overview','calendar','invoices','clients','goals','compare','tools'].map(t=>`<button class="tab-btn ${tab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}</div>`;
 
   if(tab==='overview'){
     const profComplete=profileComplete(r);const indOpts=['Advertising & Marketing','Architecture & Interior Design','Arts & Entertainment','Business Consulting','Cleaning & Maintenance','Construction & Contracting','Copywriting & Content','Education & Tutoring','Engineering','Event Planning','Fashion & Apparel','Finance & Accounting','Food & Catering','Graphic & Visual Design','Health & Wellness','HVAC & Electrical','IT & Tech Support','Landscaping & Lawn Care','Legal Services','Music & Audio','Photography','Plumbing & Trades','Real Estate','Research & Science','Social Media Management','Software & Web Development','Translation & Localization','Transportation & Delivery','Video & Film Production','Virtual Assistance','Other'];const prOpts=['Hourly','Per project','Retainer (monthly)','Day rate','Commission-based','Mixed / varies'];const expOpts=['Less than 1 year','1-2 years','3-5 years','6-10 years','10+ years'];const tmOpts=['Solo (just me)','2-5 people','6-15 people','15+ people'];h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem"><p class="ct" style="margin:0">Business profile &nbsp;<span style="color:${profComplete?'var(--ok)':'var(--warn)'}">·</span>&nbsp;<span style="font-size:10px;font-weight:400;color:${profComplete?'var(--ok)':'var(--warn)'}">${profComplete?'Profile set — AI insights are tailored to your business':'Fill this in so AI insights are specific to your business type'}</span></p><button class="btn sm" onclick="const pf=this.closest('.card').querySelector('.pf');const open=pf.style.display!=='none';pf.style.display=open?'none':'block';this.textContent=open?'${profComplete?'Edit':'Set up'}':'Done'">${profComplete?'Edit':'Set up'}</button></div><div class="pf" style="display:${profComplete?'none':'block'}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div><label class="al">Business / service type</label><input class="di" placeholder="e.g. Freelance photographer, Independent electrician..." value="${r.profile?.type||''}" oninput="updProfile('type',this.value)"></div><div><label class="al">Industry</label><select class="di" style="padding:8px 10px" onchange="updProfile('industry',this.value)"><option value="">Select...</option>${indOpts.map(i=>`<option value="${i}"${r.profile?.industry===i?' selected':''}>${i}</option>`).join('')}</select></div><div><label class="al">How you charge</label><select class="di" style="padding:8px 10px" onchange="updProfile('pricing',this.value)"><option value="">Select...</option>${prOpts.map(p=>`<option value="${p}"${r.profile?.pricing===p?' selected':''}>${p}</option>`).join('')}</select></div><div><label class="al">Team size</label><select class="di" style="padding:8px 10px" onchange="updProfile('team',this.value)"><option value="">Select...</option>${tmOpts.map(t=>`<option value="${t}"${r.profile?.team===t?' selected':''}>${t}</option>`).join('')}</select></div></div><div style="margin-bottom:10px"><label class="al">What you do and who you serve</label><input class="di" placeholder="e.g. I build Shopify stores for small e-commerce brands. I do residential plumbing in South Florida..." value="${r.profile?.description||''}" oninput="updProfile('description',this.value)"></div><div><label class="al">Years in business</label><select class="di" style="padding:8px 10px;width:auto" onchange="updProfile('experience',this.value)"><option value="">Select...</option>${expOpts.map(e=>`<option value="${e}"${r.profile?.experience===e?' selected':''}>${e}</option>`).join('')}</select></div></div></div>`;
+  // Milestones
+  const milestones=checkMilestones(r);
+  milestones.forEach(ms=>{h+=`<div style="background:linear-gradient(135deg,rgba(37,99,235,.1),rgba(124,58,237,.1));border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:12px 16px;margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center;animation:fade .3s ease"><p style="font-size:13px;font-weight:600;color:var(--t1)">${ms.emoji} ${ms.msg}</p><button class="btn sm" onclick="dismissMS('${ms.key}')">✕</button></div>`;markSeenMS(ms.key);});
+  // Recurring breakdown
+  const recRev=r.month_data.filter(m=>m.recurring).reduce((s,m)=>s+m.revenue,0);
+  const otRev=r.month_data.filter(m=>!m.recurring).reduce((s,m)=>s+m.revenue,0);
+  const totAllR=recRev+otRev;
+  const recPct=totAllR>0?Math.round(recRev/totAllR*100):0;
+  const otPct=100-recPct;
+  const stabLabel=recPct>=70?'Very stable':recPct>=50?'Stable':recPct>=25?'Mixed':'Project-based';
+  if(totAllR>0)h+=`<div class="card" style="margin-bottom:1rem"><p class="ct">Income stability</p><div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:200px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:var(--ok);font-weight:500">Recurring</span><span style="font-family:'JetBrains Mono',monospace">${fmt(recRev)} · ${recPct}%</span></div><div style="height:5px;background:var(--bg-e);border-radius:3px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:${recPct}%;background:var(--ok);border-radius:3px;transition:width .4s"></div></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:${p2};font-weight:500">One-time / project</span><span style="font-family:'JetBrains Mono',monospace">${fmt(otRev)} · ${otPct}%</span></div><div style="height:5px;background:var(--bg-e);border-radius:3px;overflow:hidden"><div style="height:100%;width:${otPct}%;background:${p2};border-radius:3px;transition:width .4s"></div></div></div><div style="text-align:center;min-width:80px"><p style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:4px">Stability</p><p style="font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${recPct>=50?'var(--ok)':recPct>=25?'var(--warn)':'var(--err)'}">${recPct}%</p><p style="font-size:10px;color:var(--t3)">${stabLabel}</p></div></div></div>`;
   h+=`<div class="card"><p class="ct">Report period</p><div class="pr"><div><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Start month</label><select onchange="updR({start_month:parseInt(this.value)})">${MN.map((m,i)=>`<option value="${i}"${r.start_month===i?' selected':''}>${m}</option>`).join('')}</select></div><div><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Start year</label><select onchange="updR({start_year:parseInt(this.value)})">${YEARS.map(y=>`<option value="${y}"${r.start_year===y?' selected':''}>${y}</option>`).join('')}</select></div><div><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Duration</label><div style="display:flex;gap:5px">${[3,6,9,12].map(d=>`<button class="chip ${r.duration===d?'active':''}" onclick="setDur(${d})">${d}mo</button>`).join('')}</div></div></div></div>`;
     h+=`<div class="kpi-grid">${[{l:'Total revenue',v:fmt(totRev),c:p1},{l:'Net profit',v:fmt(netP),c:netP>=0?'var(--ok)':'var(--err)'},{l:'Profit margin',v:pct(pMgn),c:pMgn>=20?'var(--ok)':'var(--err)'},{l:'Effective rate',v:fmtR(effR),c:p2},{l:'Avg monthly',v:fmt(avgR),c:'var(--t1)'},{l:'Total projects',v:String(totProj),c:'var(--t2)'}].map(k=>`<div class="kpi"><div class="kpi-l">${k.l}</div><div class="kpi-v" style="color:${k.c}">${k.v}</div></div>`).join('')}</div>`;
     if(prediction!==null){const trend=prediction>avgR;h+=`<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center"><div><p class="ct" style="margin-bottom:4px">AI trend prediction</p><p style="font-size:11px;color:var(--t3)">Linear trend — ${r.duration} months of data</p></div><div style="text-align:right"><p style="font-size:11px;color:var(--t3);margin-bottom:2px">Projected next month</p><p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${trend?'var(--ok)':'var(--err)'}">${fmt(prediction)}</p><p style="font-size:11px;color:${trend?'var(--ok)':'var(--err)'}">${trend?'↑':'↓'} ${Math.abs(((prediction-avgR)/avgR)*100).toFixed(1)}% vs avg</p></div></div></div>`;}
@@ -591,6 +668,8 @@ function render(){
   }
 
   if(tab==='calendar'){h+=renderCalendarTab(r,p1,p2);}
+
+  if(tab==='invoices'){h+=renderInvoicesTab(r,p1,p2);}
 
   if(tab==='clients'){
     h+=`<div class="card"><p class="ct">Add client</p><div style="display:flex;gap:10px;align-items:flex-end"><div style="flex:2"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Name</label><input id="cn" type="text" placeholder="Acme Corp" class="di"></div><div style="flex:1"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Revenue ($)</label><input id="cr" type="number" value="1000" class="nim"></div><button class="btn blue" onclick="addClient()">Add</button></div></div>`;
@@ -670,7 +749,7 @@ function doCharts(r,agg,compR,compAgg,sl,p1,p2,CLR){
 
 // ACTIONS
 function switchR(id){activeId=id;activeMonth=0;compareId=null;render();}
-function switchTab(t){tab=t;showMonthPicker=false;render();}
+function switchTab(t){tab=t;showMonthPicker=false;showInvoiceForm=false;payingInvoiceId=null;render();}
 function setAM(i){activeMonth=i;render();}
 function setCmp(id){compareId=id;render();}
 function toggleShare(){showShare=!showShare;render();}
