@@ -258,7 +258,7 @@ function renderBreakEven(){if(beResult===null)return'';return`<div class="tools-
 // PROFILE
 function buildProfileCtx(r){const p=r.profile||{},parts=[];if(p.type)parts.push("Business type: "+p.type);if(p.industry)parts.push("Industry: "+p.industry);if(p.pricing)parts.push("Pricing model: "+p.pricing);if(p.description)parts.push("What they do: "+p.description);if(p.experience)parts.push("Experience: "+p.experience);if(p.team)parts.push("Team: "+p.team);return parts.join("\n");}
 function profileComplete(r){const p=r.profile||{};return !!(p.type||p.description);}
-function updProfile(f,v){const r=getR();if(!r)return;updR({profile:{...(r.profile||{}),[f]:v}});}
+function updProfile(f,v){const r=getR();if(!r)return;r.profile={...(r.profile||{}),[f]:v};schedSave();}
 
 // PREDICTION
 function predictNextMonth(md){if(md.length<2)return null;const n=md.length,sx=md.reduce((s,_,i)=>s+i,0),sy=md.reduce((s,m)=>s+m.revenue,0),sxy=md.reduce((s,m,i)=>s+i*m.revenue,0),sx2=md.reduce((s,_,i)=>s+i*i,0),slope=(n*sxy-sx*sy)/(n*sx2-sx*sx),intercept=(sy-slope*sx)/n;return Math.max(0,Math.round(slope*n+intercept));}
