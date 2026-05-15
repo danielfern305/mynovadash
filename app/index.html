@@ -240,6 +240,7 @@ let beFixed=0,beVariable=0,beResult=null;
 const _now=new Date();
 let calMonth=_now.getMonth(),calYear=_now.getFullYear(),calSelectedDay=null;
 let showMonthPicker=false,pickerYear=_now.getFullYear();
+let calInsights='',calInsightsLoading=false;
 
 const getR=()=>reports.find(r=>r.id===activeId)||reports[0]||null;
 const getLabels=(sm,sy,n)=>Array.from({length:n},(_,i)=>{const t=sm+i;return{label:`${MN[t%12]} ${sy+Math.floor(t/12)}`,short:MN[t%12]};});
@@ -258,12 +259,12 @@ function renderBreakEven(){if(beResult===null)return'';return`<div class="tools-
 function predictNextMonth(md){if(md.length<2)return null;const n=md.length,sx=md.reduce((s,_,i)=>s+i,0),sy=md.reduce((s,m)=>s+m.revenue,0),sxy=md.reduce((s,m,i)=>s+i*m.revenue,0),sx2=md.reduce((s,_,i)=>s+i*i,0),slope=(n*sxy-sx*sy)/(n*sx2-sx*sx),intercept=(sy-slope*sx)/n;return Math.max(0,Math.round(slope*n+intercept));}
 
 // CALENDAR
-function prevMonth(){if(calMonth===0){calMonth=11;calYear--;}else calMonth--;calSelectedDay=null;showMonthPicker=false;render();}
-function nextMonth(){if(calMonth===11){calMonth=0;calYear++;}else calMonth++;calSelectedDay=null;showMonthPicker=false;render();}
+function prevMonth(){if(calMonth===0){calMonth=11;calYear--;}else calMonth--;calSelectedDay=null;showMonthPicker=false;calInsights='';render();}
+function nextMonth(){if(calMonth===11){calMonth=0;calYear++;}else calMonth++;calSelectedDay=null;showMonthPicker=false;calInsights='';render();}
 function selectDay(d){calSelectedDay=calSelectedDay===d?null:d;showMonthPicker=false;render();}
 function toggleMonthPicker(){showMonthPicker=!showMonthPicker;if(showMonthPicker)pickerYear=calYear;render();}
 function adjPickerYear(delta){pickerYear+=delta;render();}
-function selectMonthYear(m,y){calMonth=m;calYear=y;calSelectedDay=null;showMonthPicker=false;render();}
+function selectMonthYear(m,y){calMonth=m;calYear=y;calSelectedDay=null;showMonthPicker=false;calInsights='';render();}
 
 function saveDayEntry(y,m,d){
   const revenue=Number(document.getElementById('day-rev')?.value)||0;
@@ -282,6 +283,32 @@ function clearDayEntry(y,m,d){
   const k=dayKey(y,m,d),daily_data={...r.daily_data};
   delete daily_data[k];
   updR({daily_data});calSelectedDay=null;
+}
+
+async function genCalInsights(){
+  const r=getR(),key=localStorage.getItem('nd_api_key');
+  if(!key||!r)return;
+  calInsightsLoading=true;calInsights='';render();
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  let lines=[],totRev=0,totExp=0,totHrs=0,daysWithRev=0,bestDay={day:0,rev:0};
+  for(let d=1;d<=dim;d++){
+    const k=dayKey(calYear,calMonth,d),dt=r.daily_data?.[k];
+    if(dt&&(dt.revenue>0||dt.expenses>0||dt.hours>0)){
+      const type=dt.projected?' (projected)':'';
+      const note=dt.note?` — "${dt.note}"` :'';
+      lines.push(`Day ${d}: Revenue $${dt.revenue||0}${dt.expenses>0?`, Expenses $${dt.expenses}`:''}${dt.hours>0?`, Hours ${dt.hours}`:''}${type}${note}`);
+      if(!dt.projected){totRev+=dt.revenue||0;totExp+=dt.expenses||0;totHrs+=dt.hours||0;if((dt.revenue||0)>0)daysWithRev++;if((dt.revenue||0)>bestDay.rev)bestDay={day:d,rev:dt.revenue};}
+    }
+  }
+  if(!lines.length){calInsightsLoading=false;calInsights='No daily data logged for this month yet. Add some entries first.';render();return;}
+  const prompt=`Month: ${MN[calMonth]} ${calYear}\nBusiness: ${r.biz_name}\n\nDay-by-day breakdown:\n${lines.join('\n')}\n\nActual monthly totals:\nRevenue: $${totRev} | Expenses: $${totExp} | Net: $${totRev-totExp} | Hours: ${totHrs}\nDays with revenue: ${daysWithRev} of ${dim} | Best day: Day ${bestDay.day} ($${bestDay.rev})`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:'You are a sharp freelance business analyst specializing in daily work patterns. Analyze the day-by-day data and return exactly 5 numbered insights focused on DAILY patterns — which days earn most, revenue gaps, consistency, billing habits, best and worst days, and actionable recommendations. Be specific with actual day numbers and dollar amounts. Max 2 sentences each. No preamble.',messages:[{role:'user',content:prompt}]})});
+    const d=await res.json();
+    if(d.error)throw new Error(d.error.message);
+    calInsights=d.content?.map(b=>b.text||'').join('')||'No insights returned.';
+  }catch(e){calInsights=`Error: ${e.message}`;}
+  calInsightsLoading=false;render();
 }
 
 function renderCalendarTab(r,p1,p2){
@@ -397,7 +424,12 @@ function renderCalendarTab(r,p1,p2){
     </div>`;
   }
 
+  const apiKey=localStorage.getItem('nd_api_key')||'';
   const days=Array.from({length:dim},(_,i)=>i+1);
+  const hasAnyDailyData=days.some(d=>{const k=dayKey(calYear,calMonth,d);const dt=r.daily_data?.[k];return dt&&(dt.revenue>0||dt.expenses>0||dt.hours>0);});
+  if(hasAnyDailyData){
+    h+=`<div class="card"><div class="ih"><div><p style="font-size:13px;font-weight:600;color:var(--t1)">Daily pattern insights</p><p style="font-size:11px;color:var(--t3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">AI analysis of ${MN[calMonth]} ${calYear} day-by-day data</p></div><button class="gb" onclick="genCalInsights()" ${!apiKey||calInsightsLoading?'disabled':''}>${calInsightsLoading?'Analyzing...':!apiKey?'Add API key in Overview':'Analyze this month →'}</button></div>${!apiKey?`<div class="an" style="margin-top:12px">Add your Anthropic API key in the Overview tab to use AI insights.</div>`:''}${calInsights?`<div class="ib">${calInsights}</div>`:''}</div>`;
+  }
   const hasChart=days.some(d=>{const k=dayKey(calYear,calMonth,d);return r.daily_data?.[k]?.revenue>0||r.daily_data?.[k]?.expenses>0;});
   if(hasChart){
     h+=`<div class="cg">
