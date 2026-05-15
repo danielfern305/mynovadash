@@ -527,7 +527,7 @@ async function initApp(u){user=u;uname=u.user_metadata?.name||u.email.split('@')
 // DB
 async function loadReports(){const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:(d.month_data||[]).map(m=>({...DEF,...m})),clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||'',daily_data:d.daily_data||{},profile:d.profile||{type:'',industry:'',pricing:'',description:'',experience:'',team:''}}));activeId=reports[0].id;}}
 async function saveToDB(r){
-  const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data||{},profile:r.profile||{}};
+  const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data||{},profile:r.profile||{},invoices:r.invoices||[]};
   if(r.db_id){
     const{error}=await sb.from('reports').update(p).eq('id',r.db_id);
     if(error){console.error('Save error:',error);showToast('Save failed: '+error.message,'err');}
