@@ -241,7 +241,7 @@ const _now=new Date();
 let calMonth=_now.getMonth(),calYear=_now.getFullYear(),calSelectedDay=null;
 let showMonthPicker=false,pickerYear=_now.getFullYear();
 let calInsights='',calInsightsLoading=false;
-let showInvoiceForm=false,payingInvoiceId=null,payingDate=new Date().toISOString().split('T')[0];
+let showInvoiceForm=false,payingInvoiceId=null,payingDate=new Date().toISOString().split('T')[0],editingInvoiceId=null;
 
 const getR=()=>reports.find(r=>r.id===activeId)||reports[0]||null;
 const getLabels=(sm,sy,n)=>Array.from({length:n},(_,i)=>{const t=sm+i;return{label:`${MN[t%12]} ${sy+Math.floor(t/12)}`,short:MN[t%12]};});
@@ -322,9 +322,11 @@ function renderCalendarTab(r,p1,p2){
   const firstDay=new Date(calYear,calMonth,1).getDay();
   const today=todayMidnight();
   const isNow=today.getMonth()===calMonth&&today.getFullYear()===calYear;
-  let actRev=0,actExp=0,actHrs=0,projRev=0,projExp=0,dLogged=0;
+  let actRev=0,actExp=0,actHrs=0,projRev=0,projExp=0,dLogged=0,invProjTot=0;
   for(let d=1;d<=dim;d++){
     const k=dayKey(calYear,calMonth,d),dt=r.daily_data?.[k];
+    const invK2='inv:'+k,invArr2=r.daily_data?.[invK2]||[];
+    invProjTot+=invArr2.reduce((s,i)=>s+i.amount,0);
     if(dt){
       if(dt.projected){projRev+=dt.revenue||0;projExp+=dt.expenses||0;}
       else{actRev+=dt.revenue||0;actExp+=dt.expenses||0;actHrs+=dt.hours||0;}
@@ -362,15 +364,15 @@ function renderCalendarTab(r,p1,p2){
       </div>
     </div>`;
 
+  const hasData=actRev>0||actExp>0||projRev>0||projExp>0||invProjTot>0;
   if(hasData){
     h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;margin-bottom:1.25rem;background:var(--bd);border:1px solid var(--bd);border-radius:8px;overflow:hidden">`;
     h+=`<div class="kpi"><div class="kpi-l">Actual revenue</div><div class="kpi-v" style="color:var(--ok);font-size:16px">${fmt(actRev)}</div></div>`;
     h+=`<div class="kpi"><div class="kpi-l">Actual expenses</div><div class="kpi-v" style="color:var(--err);font-size:16px">${fmt(actExp)}</div></div>`;
     h+=`<div class="kpi"><div class="kpi-l">Net so far</div><div class="kpi-v" style="color:${actRev-actExp>=0?'var(--ok)':'var(--err)'};font-size:16px">${fmt(actRev-actExp)}</div></div>`;
-    if(projRev>0||projExp>0){
-      h+=`<div class="kpi"><div class="kpi-l">Projected in</div><div class="kpi-v" style="color:#CA8A04;font-size:16px">~${fmt(projRev)}</div></div>`;
-      h+=`<div class="kpi"><div class="kpi-l">Total expected</div><div class="kpi-v" style="color:var(--p1);font-size:16px">${fmt(actRev+projRev)}</div></div>`;
-    }
+    if(projRev>0||projExp>0){h+=`<div class="kpi"><div class="kpi-l">Manual projected</div><div class="kpi-v" style="color:#CA8A04;font-size:16px">~${fmt(projRev)}</div></div>`;}
+    if(invProjTot>0){h+=`<div class="kpi"><div class="kpi-l">Invoices due</div><div class="kpi-v" style="color:#CA8A04;font-size:16px">~${fmt(invProjTot)}</div></div>`;}
+    if(invProjTot>0||projRev>0){h+=`<div class="kpi"><div class="kpi-l">Total expected</div><div class="kpi-v" style="color:var(--p1);font-size:16px">${fmt(actRev+projRev+invProjTot)}</div></div>`;}
     h+=`</div>`;
   }
 
@@ -379,20 +381,25 @@ function renderCalendarTab(r,p1,p2){
   for(let i=0;i<firstDay;i++)h+=`<div class="cal-empty"></div>`;
   for(let d=1;d<=dim;d++){
     const k=dayKey(calYear,calMonth,d),dt=r.daily_data?.[k];
+    const invK='inv:'+k,invArr=r.daily_data?.[invK]||[];
+    const invTot=invArr.reduce((s,i)=>s+i.amount,0);
+    const invClients=invArr.map(i=>i.client).join(', ');
     const isProj=dt?.projected===true,hasActual=dt&&!isProj&&(dt.revenue>0||dt.expenses>0),hasAnyData=dt&&(dt.revenue>0||dt.expenses>0);
+    const hasInv=invArr.length>0;
     const isSel=calSelectedDay===d,isTod=isNow&&today.getDate()===d;
     const cd=cellDate(calYear,calMonth,d),isFuture=cd>todayMidnight();
     let cls='cal-cell';
     if(isSel)cls+=' sel';
     else if(hasActual)cls+=' has-actual';
-    else if(isProj&&hasAnyData)cls+=' has-proj';
+    else if((isProj&&hasAnyData)||hasInv)cls+=' has-proj';
     if(isTod)cls+=' tod';
     h+=`<div class="${cls}" onclick="selectDay(${d})">
       <span class="day-n">${d}${isTod?` <span style="font-size:8px;background:var(--p1);color:#fff;border-radius:3px;padding:0 3px;vertical-align:middle">today</span>`:''}</span>
       ${dt&&dt.revenue>0?(isProj?`<span class="day-pr">~${fmt(dt.revenue)}</span>`:`<span class="day-r">+${fmt(dt.revenue)}</span>`):''}
       ${dt&&dt.expenses>0?(isProj?`<span class="day-pr" style="color:#92400E">~-${fmt(dt.expenses)}</span>`:`<span class="day-e">-${fmt(dt.expenses)}</span>`):''}
+      ${hasInv?`<span class="day-pr" style="font-size:9px">📄 ~${fmt(invTot)}</span>`:''}
       ${dt?.note?`<span class="day-nt">${dt.note}</span>`:''}
-      ${isFuture&&!hasAnyData?`<span style="font-size:9px;color:var(--t3);opacity:.5">future</span>`:''}
+      ${hasInv&&!isSel?`<span class="day-nt">${invClients}</span>`:''}
     </div>`;
   }
   h+=`</div></div>`;
@@ -456,17 +463,56 @@ function renderCalendarTab(r,p1,p2){
 
 // INVOICES
 function getInvoiceStatus(inv){if(inv.status==='paid')return'paid';const t=new Date();t.setHours(0,0,0,0);const d=new Date(inv.due_date+'T00:00:00');return d<t?'overdue':'unpaid';}
-function addInvoice(){const cl=document.getElementById('inv-client')?.value.trim(),am=Number(document.getElementById('inv-amount')?.value)||0,desc=document.getElementById('inv-desc')?.value.trim()||'',id=document.getElementById('inv-date')?.value,dd=document.getElementById('inv-due')?.value;if(!cl||!am||!id||!dd){alert('Please fill in client, amount, invoice date and due date.');return;}const r=getR();if(!r)return;updR({invoices:[...(r.invoices||[]),{id:uid(),client:cl,amount:am,description:desc,invoice_date:id,due_date:dd,paid_date:null,status:'unpaid'}]});showInvoiceForm=false;}
-function deleteInvoice(id){if(!confirm('Delete this invoice?'))return;const r=getR();if(!r)return;updR({invoices:(r.invoices||[]).filter(i=>i.id!==id)});}
-function startMarkPaid(id){payingInvoiceId=id;payingDate=new Date().toISOString().split('T')[0];render();}
+function invDayKey(dateStr){const p=dateStr.split('-');return dayKey(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));}
+function syncInvoiceProjections(invoices,daily_data){
+  // Remove all existing invoice projection keys (prefixed with inv:)
+  const nd={};
+  Object.entries(daily_data||{}).forEach(([k,v])=>{if(!k.startsWith('inv:'))nd[k]=v;});
+  // Re-add projections for all unpaid/overdue invoices grouped by due_date
+  invoices.filter(i=>i.status!=='paid').forEach(inv=>{
+    const k='inv:'+invDayKey(inv.due_date);
+    if(!nd[k])nd[k]=[];
+    nd[k].push({id:inv.id,client:inv.client,amount:inv.amount});
+  });
+  return nd;
+}
+function addInvoice(){
+  const cl=document.getElementById('inv-client')?.value.trim(),am=Number(document.getElementById('inv-amount')?.value)||0,desc=document.getElementById('inv-desc')?.value.trim()||'',id=document.getElementById('inv-date')?.value,dd=document.getElementById('inv-due')?.value;
+  if(!cl||!am||!id||!dd){alert('Please fill in client, amount, invoice date and due date.');return;}
+  const r=getR();if(!r)return;
+  const invoices=[...(r.invoices||[]),{id:uid(),client:cl,amount:am,description:desc,invoice_date:id,due_date:dd,paid_date:null,status:'unpaid'}];
+  const daily_data=syncInvoiceProjections(invoices,r.daily_data||{});
+  updR({invoices,daily_data});showInvoiceForm=false;
+}
+function deleteInvoice(id){
+  if(!confirm('Delete this invoice?'))return;
+  const r=getR();if(!r)return;
+  const invoices=(r.invoices||[]).filter(i=>i.id!==id);
+  const daily_data=syncInvoiceProjections(invoices,r.daily_data||{});
+  updR({invoices,daily_data});
+}
+function startEditInvoice(id){editingInvoiceId=id;payingInvoiceId=null;render();}
+function cancelEditInvoice(){editingInvoiceId=null;render();}
+function saveInvoiceEdit(id){
+  const cl=document.getElementById('edit-cl-'+id)?.value.trim(),am=Number(document.getElementById('edit-am-'+id)?.value)||0;
+  const desc=document.getElementById('edit-desc-'+id)?.value.trim()||'';
+  const invD=document.getElementById('edit-id-'+id)?.value,dueD=document.getElementById('edit-dd-'+id)?.value;
+  if(!cl||!am||!invD||!dueD){alert('Please fill in all required fields.');return;}
+  const r=getR();if(!r)return;
+  const invoices=(r.invoices||[]).map(i=>i.id===id?{...i,client:cl,amount:am,description:desc,invoice_date:invD,due_date:dueD}:i);
+  const daily_data=syncInvoiceProjections(invoices,r.daily_data||{});
+  editingInvoiceId=null;updR({invoices,daily_data});
+}
+function startMarkPaid(id){payingInvoiceId=id;editingInvoiceId=null;payingDate=new Date().toISOString().split('T')[0];render();}
 function confirmMarkPaid(){
   const r=getR();if(!r)return;
   const inv=(r.invoices||[]).find(i=>i.id===payingInvoiceId);if(!inv||!payingDate)return;
   const invoices=(r.invoices||[]).map(i=>i.id===payingInvoiceId?{...i,status:'paid',paid_date:payingDate}:i);
-  const pts=payingDate.split('-'),py=parseInt(pts[0]),pm=parseInt(pts[1])-1,pd=parseInt(pts[2]);
-  const k=dayKey(py,pm,pd),ex=r.daily_data?.[k]||{revenue:0,expenses:0,hours:0,note:'',projected:false};
-  const note=ex.note?ex.note+' | Invoice: '+inv.client:'Invoice paid: '+inv.client;
-  const daily_data={...r.daily_data,[k]:{...ex,revenue:(ex.revenue||0)+inv.amount,note,projected:false}};
+  // Sync removes the projection from due_date, then add actual revenue on paid_date
+  const base=syncInvoiceProjections(invoices,r.daily_data||{});
+  const k=invDayKey(payingDate),ex=base[k]||{revenue:0,expenses:0,hours:0,note:'',projected:false};
+  const note=ex.note?ex.note+' | Invoice paid: '+inv.client:'Invoice paid: '+inv.client;
+  const daily_data={...base,[k]:{...ex,revenue:(ex.revenue||0)+inv.amount,note,projected:false}};
   payingInvoiceId=null;updR({invoices,daily_data});
 }
 function calcAvgCollection(invs){const paid=invs.filter(i=>i.status==='paid'&&i.paid_date&&i.invoice_date);if(!paid.length)return null;const tot=paid.reduce((s,i)=>{const a=new Date(i.invoice_date+'T00:00:00'),b=new Date(i.paid_date+'T00:00:00');return s+Math.max(0,(b-a)/(86400000));},0);return Math.round(tot/paid.length);}
@@ -491,7 +537,12 @@ function renderInvoicesTab(r,p1,p2){
       const sc={paid:'var(--ok)',unpaid:'var(--p1)',overdue:'var(--err)'};
       const sb={paid:'rgba(34,197,94,.1)',unpaid:'var(--p1s)',overdue:'rgba(239,68,68,.1)'};
       const isPaying=payingInvoiceId===inv.id;
-      h+=`<div class="card" style="margin-bottom:.75rem"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><p style="font-size:15px;font-weight:600;color:var(--t1)">${inv.client}</p><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;background:${sb[st]};color:${sc[st]}">${st}</span></div>${inv.description?`<p style="font-size:12px;color:var(--t3)">${inv.description}</p>`:''}</div><p style="font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${sc[st]}">${fmt(inv.amount)}</p></div><div style="display:flex;gap:1.5rem;font-size:12px;color:var(--t3);margin-bottom:12px"><span>Sent: ${inv.invoice_date}</span><span>Due: ${inv.due_date}</span>${inv.paid_date?`<span style="color:var(--ok)">Paid: ${inv.paid_date}</span>`:''}</div>${isPaying?`<div style="display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--bg-e);border-radius:7px;margin-bottom:10px"><span style="font-size:12px;color:var(--t2);font-weight:500">Payment date:</span><input type="date" class="di" style="width:auto;padding:5px 8px;font-size:12px" value="${payingDate}" onchange="payingDate=this.value"><button class="btn blue sm" onclick="confirmMarkPaid()">Confirm ✓</button><button class="btn sm" onclick="payingInvoiceId=null;render()">Cancel</button></div>`:''}<div style="display:flex;gap:6px">${st!=='paid'?`<button class="btn sm" onclick="startMarkPaid('${inv.id}')" style="color:var(--ok);border-color:rgba(34,197,94,.2)">Mark paid →</button>`:''}<button class="btn sm" onclick="deleteInvoice('${inv.id}')" style="color:var(--err);border-color:rgba(239,68,68,.2)">Delete</button></div></div>`;
+      const isEditing=editingInvoiceId===inv.id;
+      if(isEditing){
+        h+=`<div class="card" style="margin-bottom:.75rem;border-color:var(--p1);animation:fade .2s ease"><p class="ct">Editing invoice</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div><label class="al">Client name</label><input id="edit-cl-${inv.id}" class="di" value="${inv.client}"></div><div><label class="al">Amount ($)</label><input id="edit-am-${inv.id}" type="number" class="nim" value="${inv.amount}"></div><div><label class="al">Invoice date</label><input id="edit-id-${inv.id}" type="date" class="di" value="${inv.invoice_date}"></div><div><label class="al">Due date</label><input id="edit-dd-${inv.id}" type="date" class="di" value="${inv.due_date}"></div></div><div style="margin-bottom:12px"><label class="al">Description (optional)</label><input id="edit-desc-${inv.id}" class="di" value="${inv.description||''}"></div><div style="display:flex;gap:8px"><button class="btn blue" onclick="saveInvoiceEdit('${inv.id}')">Save changes</button><button class="btn" onclick="cancelEditInvoice()">Cancel</button></div></div>`;
+      } else {
+        h+=`<div class="card" style="margin-bottom:.75rem"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><p style="font-size:15px;font-weight:600;color:var(--t1)">${inv.client}</p><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;background:${sb[st]};color:${sc[st]}">${st}</span></div>${inv.description?`<p style="font-size:12px;color:var(--t3)">${inv.description}</p>`:''}</div><p style="font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${sc[st]}">${fmt(inv.amount)}</p></div><div style="display:flex;gap:1.5rem;font-size:12px;color:var(--t3);margin-bottom:12px;flex-wrap:wrap"><span>Sent: ${inv.invoice_date}</span><span>Due: ${inv.due_date}</span>${inv.paid_date?`<span style="color:var(--ok)">Paid: ${inv.paid_date}</span>`:''}</div>${isPaying?`<div style="display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--bg-e);border-radius:7px;margin-bottom:10px;flex-wrap:wrap"><span style="font-size:12px;color:var(--t2);font-weight:500">Payment date:</span><input type="date" class="di" style="width:auto;padding:5px 8px;font-size:12px" value="${payingDate}" onchange="payingDate=this.value"><button class="btn blue sm" onclick="confirmMarkPaid()">Confirm ✓</button><button class="btn sm" onclick="payingInvoiceId=null;render()">Cancel</button></div>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" onclick="startEditInvoice('${inv.id}')">Edit</button>${st!=='paid'?`<button class="btn sm" onclick="startMarkPaid('${inv.id}')" style="color:var(--ok);border-color:rgba(34,197,94,.2)">Mark paid →</button>`:''}<button class="btn sm" onclick="deleteInvoice('${inv.id}')" style="color:var(--err);border-color:rgba(239,68,68,.2)">Delete</button></div></div>`;
+      }
     });
   }
   return h;
@@ -749,7 +800,7 @@ function doCharts(r,agg,compR,compAgg,sl,p1,p2,CLR){
 
 // ACTIONS
 function switchR(id){activeId=id;activeMonth=0;compareId=null;render();}
-function switchTab(t){tab=t;showMonthPicker=false;showInvoiceForm=false;payingInvoiceId=null;render();}
+function switchTab(t){tab=t;showMonthPicker=false;showInvoiceForm=false;payingInvoiceId=null;editingInvoiceId=null;render();}
 function setAM(i){activeMonth=i;render();}
 function setCmp(id){compareId=id;render();}
 function toggleShare(){showShare=!showShare;render();}
