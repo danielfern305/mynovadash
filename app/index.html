@@ -94,6 +94,31 @@ nav{background:var(--bg-s);padding:0 1.5rem;height:56px;display:flex;align-items
 .di:focus{outline:none;border-color:var(--bd-m)}
 .nim{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px;color:var(--t1);background:var(--bg-s);font-family:'JetBrains Mono',monospace}
 .nim:focus{outline:none;border-color:var(--bd-m)}
+/* Calendar */
+.cal-notice{background:var(--bg-e);border:1px solid var(--bd);border-radius:7px;padding:9px 14px;margin-bottom:1rem;font-size:12px;color:var(--t3);display:flex;align-items:center;gap:8px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dh{text-align:center;font-size:10px;font-weight:600;color:var(--t3);padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-cell{min-height:76px;border-radius:6px;padding:8px 7px;border:1px solid var(--bd);background:var(--bg-s);cursor:pointer;transition:border-color .15s,background .15s;position:relative;overflow:hidden}
+.cal-cell:hover{border-color:var(--bd-m);background:var(--bg-e)}
+.cal-cell.sel{border-color:var(--p1);background:var(--p1s)}
+.cal-cell.has{border-color:rgba(37,99,235,0.2);background:rgba(37,99,235,0.04)}
+.cal-cell.tod .day-n{color:var(--p1);font-weight:700}
+.cal-empty{min-height:76px}
+.day-n{font-size:12px;font-weight:500;color:var(--t2);display:block;margin-bottom:4px}
+.day-r{font-size:10px;color:var(--ok);font-family:'JetBrains Mono',monospace;display:block;line-height:1.5}
+.day-e{font-size:10px;color:var(--err);font-family:'JetBrains Mono',monospace;display:block;line-height:1.5}
+.day-nt{font-size:9px;color:var(--t3);display:block;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+/* Tools */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1rem}
+.tools-result{background:var(--bg-s);border:1px solid var(--bd);border-radius:8px;padding:1rem 1.25rem;margin-top:1rem}
+.tax-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin-bottom:1rem}
+.tax-item{background:var(--bg-c);padding:.75rem 1rem}
+.tax-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:4px}
+.tax-val{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)}
+.step-badge{width:22px;height:22px;border-radius:50%;background:var(--p1s);border:1px solid var(--p1b);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--p1);flex-shrink:0}
+.info-green{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.15);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.info-blue{background:var(--p1s);border:1px solid var(--p1b);border-radius:8px;padding:12px 14px}
+/* Import */
 .dz{border:1.5px dashed var(--bd-m);border-radius:10px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-s)}
 .dz:hover,.dz.over{border-color:var(--p1);background:var(--p1s)}
 .spinner{width:36px;height:36px;border:2px solid var(--bd);border-top-color:var(--p1);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1.5rem}
@@ -105,35 +130,24 @@ nav{background:var(--bg-s);padding:0 1.5rem;height:56px;display:flex;align-items
 .preview-table input{width:100%;padding:5px 8px;border:1px solid transparent;border-radius:5px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--t1);background:transparent;transition:border-color .2s}
 .preview-table input:hover{border-color:var(--bd)}
 .preview-table input:focus{outline:none;border-color:var(--p1);background:var(--bg-s)}
-/* Tools */
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1rem}
-.tools-result{background:var(--bg-s);border:1px solid var(--bd);border-radius:8px;padding:1rem 1.25rem;margin-top:1rem}
-.tax-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin-bottom:1rem}
-.tax-item{background:var(--bg-c);padding:.75rem 1rem}
-.tax-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:4px}
-.tax-val{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)}
-.step-badge{width:22px;height:22px;border-radius:50%;background:var(--p1s);border:1px solid var(--p1b);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--p1);flex-shrink:0}
-.info-green{background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.15);border-radius:8px;padding:12px 14px;margin-bottom:12px}
-.info-blue{background:var(--p1s);border:1px solid var(--p1b);border-radius:8px;padding:12px 14px}
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:500;padding:1rem}
 .modal-box{background:var(--bg-c);border:1px solid var(--bd);border-radius:12px;padding:2rem;max-width:480px;width:100%;max-height:85vh;overflow-y:auto}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg-s)}::-webkit-scrollbar-thumb{background:var(--bg-e);border-radius:3px}
-@media(max-width:600px){.cg{grid-template-columns:1fr}.ig{grid-template-columns:repeat(2,1fr)}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.cg{grid-template-columns:1fr}.ig{grid-template-columns:repeat(2,1fr)}.kpi-grid{grid-template-columns:repeat(2,1fr)}.cal-grid{gap:2px}.cal-cell{min-height:56px;padding:5px}}
 </style>
 </head>
 <body>
 <div id="loading">
   <div style="display:flex;align-items:center;gap:10px">
-    <svg width="30" height="27" viewBox="0 0 40 36" fill="none" aria-hidden="true"><line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/><path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/><polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="3" r="2.5" fill="#2563EB"/></svg>
+    <svg width="30" height="27" viewBox="0 0 40 36" fill="none"><line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/><path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/><polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="3" r="2.5" fill="#2563EB"/></svg>
     <div style="line-height:1;display:flex;align-items:baseline"><span style="color:#9090A8;font-weight:300;font-size:11px;letter-spacing:.5px">my</span><span style="color:#2563EB;font-weight:400;font-size:16px;letter-spacing:-.3px">Nova</span><span style="color:#9090A8;font-weight:300;font-size:16px;letter-spacing:-.3px">Dash</span></div>
   </div>
 </div>
-
 <div id="auth-screen" style="display:none">
   <div class="auth-box">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:.375rem">
-      <svg width="24" height="22" viewBox="0 0 40 36" fill="none" aria-hidden="true"><line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/><path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/><polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="3" r="2.5" fill="#2563EB"/></svg>
+      <svg width="24" height="22" viewBox="0 0 40 36" fill="none"><line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/><path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/><polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="3" r="2.5" fill="#2563EB"/></svg>
       <div style="line-height:1;display:flex;align-items:baseline"><span style="color:#9090A8;font-weight:300;font-size:10px;letter-spacing:.5px">my</span><span style="color:#2563EB;font-weight:400;font-size:14px;letter-spacing:-.3px">Nova</span><span style="color:#9090A8;font-weight:300;font-size:14px;letter-spacing:-.3px">Dash</span></div>
     </div>
     <p style="font-size:13px;color:var(--t2);margin-bottom:2rem" id="auth-sub">Sign in to your account</p>
@@ -145,11 +159,10 @@ nav{background:var(--bg-s);padding:0 1.5rem;height:56px;display:flex;align-items
     <div class="auth-switch" id="auth-switch">Don't have an account? <a onclick="toggleAuth()">Sign up</a></div>
   </div>
 </div>
-
 <div id="app" style="display:none;flex-direction:column;min-height:100vh">
   <nav>
     <a class="nav-logo" href="/">
-      <svg width="30" height="27" viewBox="0 0 40 36" fill="none" aria-hidden="true"><line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/><path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/><polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="3" r="2.5" fill="#2563EB"/></svg>
+      <svg width="30" height="27" viewBox="0 0 40 36" fill="none"><line x1="0" y1="34" x2="40" y2="34" stroke="#2E2E44" stroke-width=".75"/><path d="M2,34 L2,27 L7,21 L11,25 L16,23 L20,28 L25,22 L30,17 L38,3 L38,34 Z" fill="rgba(37,99,235,0.07)"/><polyline points="2,27 7,21 11,25 16,23 20,28 25,22 30,17" stroke="#5A5A78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="17" x2="38" y2="3" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/><circle cx="38" cy="3" r="2.5" fill="#2563EB"/></svg>
       <div style="line-height:1;display:flex;align-items:baseline"><span style="color:#9090A8;font-weight:300;font-size:11px;letter-spacing:.5px">my</span><span style="color:#2563EB;font-weight:400;font-size:16px;letter-spacing:-.3px">Nova</span><span style="color:#9090A8;font-weight:300;font-size:16px;letter-spacing:-.3px">Dash</span></div>
     </a>
     <div class="nav-right">
@@ -162,7 +175,6 @@ nav{background:var(--bg-s);padding:0 1.5rem;height:56px;display:flex;align-items
   </nav>
   <div class="main"><div id="content"></div></div>
 </div>
-
 <script>
 const SB_URL='https://nzccxsbhzovkqojyelxw.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56Y2N4c2Joem92a3FvanllbHh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2OTI5MDMsImV4cCI6MjA5NDI2ODkwM30.xraOqLGPoPPA0q4bPwzIoDUR3Xz9Kp-p9A7FuY8sRD4';
@@ -174,8 +186,8 @@ const fmt=n=>'$'+Math.round(n).toLocaleString();
 const fmtR=n=>'$'+Math.round(n)+'/hr';
 const pct=n=>n.toFixed(1)+'%';
 const uid=()=>Math.random().toString(36).slice(2,9);
+const dayKey=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
-// STATES TAX DATA
 const STATES=[
   {c:'AL',n:'Alabama',r:5.0},{c:'AK',n:'Alaska',r:0},{c:'AZ',n:'Arizona',r:2.5},{c:'AR',n:'Arkansas',r:4.7},
   {c:'CA',n:'California',r:9.3},{c:'CO',n:'Colorado',r:4.4},{c:'CT',n:'Connecticut',r:6.99},{c:'DE',n:'Delaware',r:6.6},
@@ -192,7 +204,6 @@ const STATES=[
   {c:'WI',n:'Wisconsin',r:7.65},{c:'WY',n:'Wyoming',r:0},{c:'DC',n:'Washington D.C.',r:10.75}
 ];
 
-// THEME
 const PALETTES={
   nova:{name:'Nova',p1:'#2563EB',p1h:'#1D4ED8',p2:'#7C3AED',charts:['#3B82F6','#7C3AED','#06B6D4','#6366F1','#8B5CF6','#0EA5E9']},
   ember:{name:'Ember',p1:'#EA580C',p1h:'#C2410C',p2:'#DC2626',charts:['#EA580C','#DC2626','#F97316','#EF4444','#FB923C','#C2410C']},
@@ -218,91 +229,111 @@ let compareId=null,charts={},saveTimer=null,authMode='signin';
 let importStep='upload',importPreview=null,importMsg='';
 let taxState='FL',taxFiling='single',taxIncome=0,taxResult=null;
 let beFixed=0,beVariable=0,beResult=null;
+const now=new Date();
+let calMonth=now.getMonth(),calYear=now.getFullYear(),calSelectedDay=null;
 
 const getR=()=>reports.find(r=>r.id===activeId)||reports[0]||null;
 const getLabels=(sm,sy,n)=>Array.from({length:n},(_,i)=>{const t=sm+i;return{label:`${MN[t%12]} ${sy+Math.floor(t/12)}`,short:MN[t%12]};});
 const calcAgg=r=>{const md=r.month_data,tR=md.reduce((s,m)=>s+m.revenue,0),tE=md.reduce((s,m)=>s+m.expenses,0),tH=md.reduce((s,m)=>s+m.hours,0),tP=md.reduce((s,m)=>s+m.projects,0),nP=tR-tE;return{totRev:tR,totExp:tE,totHrs:tH,totProj:tP,netP:nP,pMgn:tR>0?nP/tR*100:0,effR:tH>0?tR/tH:0,avgR:tR/md.length};};
-function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:''};}
+function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:'',daily_data:{}};}
 
-// TAX FUNCTIONS
-function calcFederalTax(income,status){
-  const ded=status==='married'?29200:14600;
-  const taxable=Math.max(0,income-ded);
-  const brackets=status==='married'?[[23200,.10],[94300,.12],[201050,.22],[383900,.24],[487450,.32],[731200,.35],[Infinity,.37]]:[[11600,.10],[47150,.12],[100525,.22],[191950,.24],[243725,.32],[609350,.35],[Infinity,.37]];
-  let tax=0,prev=0;
-  for(const[limit,rate]of brackets){if(taxable<=prev)break;tax+=(Math.min(taxable,limit)-prev)*rate;prev=limit;}
-  return tax;
-}
-function calcTax(netProfit,state,filing){
-  const seTaxBase=netProfit*0.9235,seTax=seTaxBase*0.153,seDeduct=seTax/2;
-  const adj=netProfit-seDeduct;
-  const fedTax=calcFederalTax(adj,filing);
-  const stateRate=(STATES.find(s=>s.c===state)?.r||0)/100;
-  const stateTax=adj*stateRate;
-  const totalAnnual=seTax+fedTax+stateTax;
-  return{seTax:Math.round(seTax),fedTax:Math.round(fedTax),stateTax:Math.round(stateTax),totalAnnual:Math.round(totalAnnual),quarterly:Math.round(totalAnnual/4),monthly:Math.round(totalAnnual/12),effectiveRate:netProfit>0?totalAnnual/netProfit*100:0};
-}
-function runTaxCalc(){
-  const income=Number(document.getElementById('tax-income')?.value)||0;
-  const state=document.getElementById('tax-state')?.value||taxState;
-  const filing=document.getElementById('tax-filing')?.value||taxFiling;
-  taxState=state;taxFiling=filing;taxIncome=income;
-  if(!income){alert('Please enter your annual net profit.');return;}
-  taxResult=calcTax(income,state,filing);
-  const box=document.getElementById('tax-result-box');
-  if(box)box.innerHTML=renderTaxResult();
-}
-function renderTaxResult(){
-  if(!taxResult)return'';
-  const{seTax,fedTax,stateTax,totalAnnual,quarterly,monthly,effectiveRate}=taxResult;
-  return`<div class="tools-result">
-    <div class="tax-breakdown">
-      ${[['Self-employment tax',fmt(seTax)],['Federal income tax',fmt(fedTax)],['State income tax',fmt(stateTax)],['Total annual tax',fmt(totalAnnual)]].map(([l,v])=>`<div class="tax-item"><div class="tax-label">${l}</div><div class="tax-val">${v}</div></div>`).join('')}
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div style="background:var(--p1s);border:1px solid var(--p1b);border-radius:8px;padding:1rem;text-align:center">
-        <p style="font-size:10px;font-weight:600;color:var(--p1);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Quarterly payment</p>
-        <p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)">${fmt(quarterly)}</p>
-        <p style="font-size:11px;color:var(--t3);margin-top:4px">Due Jan · Apr · Jun · Sep</p>
-      </div>
-      <div style="background:var(--bg-e);border:1px solid var(--bd);border-radius:8px;padding:1rem;text-align:center">
-        <p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Set aside monthly</p>
-        <p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)">${fmt(monthly)}</p>
-        <p style="font-size:11px;color:var(--t3);margin-top:4px">Effective rate: ${effectiveRate.toFixed(1)}%</p>
-      </div>
-    </div>
-    <p style="font-size:11px;color:var(--t3);margin-top:12px;font-style:italic">Estimate only — not tax advice. Consult a CPA for your specific situation.</p>
-  </div>`;
-}
-function runBreakEven(){
-  const fixed=Number(document.getElementById('be-fixed')?.value)||0;
-  const variable=Number(document.getElementById('be-variable')?.value)||0;
-  if(variable>=100){alert('Variable costs cannot be 100% or more.');return;}
-  beFixed=fixed;beVariable=variable;
-  beResult=Math.round(fixed/(1-variable/100));
-  const box=document.getElementById('be-result-box');
-  if(box)box.innerHTML=renderBreakEven();
-}
-function renderBreakEven(){
-  if(beResult===null)return'';
-  return`<div class="tools-result" style="text-align:center">
-    <p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Monthly break-even point</p>
-    <p style="font-size:40px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--p1);margin-bottom:6px">${fmt(beResult)}</p>
-    <p style="font-size:13px;color:var(--t2);margin-bottom:1rem">You need to earn at least this much each month to cover your costs</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:6px;overflow:hidden">
-      ${[['Fixed expenses',fmt(beFixed)],['Variable costs',beVariable+'%'],['Daily target',fmt(Math.round(beResult/30))]].map(([l,v])=>`<div style="background:var(--bg-c);padding:.75rem;text-align:center"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:4px">${l}</div><div style="font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)">${v}</div></div>`).join('')}
-    </div>
-  </div>`;
-}
+// TAX
+function calcFederalTax(income,status){const ded=status==='married'?29200:14600,taxable=Math.max(0,income-ded),brackets=status==='married'?[[23200,.10],[94300,.12],[201050,.22],[383900,.24],[487450,.32],[731200,.35],[Infinity,.37]]:[[11600,.10],[47150,.12],[100525,.22],[191950,.24],[243725,.32],[609350,.35],[Infinity,.37]];let tax=0,prev=0;for(const[limit,rate]of brackets){if(taxable<=prev)break;tax+=(Math.min(taxable,limit)-prev)*rate;prev=limit;}return tax;}
+function calcTax(netProfit,state,filing){const seTaxBase=netProfit*0.9235,seTax=seTaxBase*0.153,seDeduct=seTax/2,adj=netProfit-seDeduct,fedTax=calcFederalTax(adj,filing),stateRate=(STATES.find(s=>s.c===state)?.r||0)/100,stateTax=adj*stateRate,totalAnnual=seTax+fedTax+stateTax;return{seTax:Math.round(seTax),fedTax:Math.round(fedTax),stateTax:Math.round(stateTax),totalAnnual:Math.round(totalAnnual),quarterly:Math.round(totalAnnual/4),monthly:Math.round(totalAnnual/12),effectiveRate:netProfit>0?totalAnnual/netProfit*100:0};}
+function runTaxCalc(){const income=Number(document.getElementById('tax-income')?.value)||0,state=document.getElementById('tax-state')?.value||taxState,filing=document.getElementById('tax-filing')?.value||taxFiling;taxState=state;taxFiling=filing;taxIncome=income;if(!income){alert('Please enter your annual net profit.');return;}taxResult=calcTax(income,state,filing);const box=document.getElementById('tax-result-box');if(box)box.innerHTML=renderTaxResult();}
+function renderTaxResult(){if(!taxResult)return'';const{seTax,fedTax,stateTax,totalAnnual,quarterly,monthly,effectiveRate}=taxResult;return`<div class="tools-result"><div class="tax-breakdown">${[['Self-employment tax',fmt(seTax)],['Federal income tax',fmt(fedTax)],['State income tax',fmt(stateTax)],['Total annual tax',fmt(totalAnnual)]].map(([l,v])=>`<div class="tax-item"><div class="tax-label">${l}</div><div class="tax-val">${v}</div></div>`).join('')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div style="background:var(--p1s);border:1px solid var(--p1b);border-radius:8px;padding:1rem;text-align:center"><p style="font-size:10px;font-weight:600;color:var(--p1);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Quarterly payment</p><p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)">${fmt(quarterly)}</p><p style="font-size:11px;color:var(--t3);margin-top:4px">Due Jan · Apr · Jun · Sep</p></div><div style="background:var(--bg-e);border:1px solid var(--bd);border-radius:8px;padding:1rem;text-align:center"><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Set aside monthly</p><p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)">${fmt(monthly)}</p><p style="font-size:11px;color:var(--t3);margin-top:4px">Effective rate: ${effectiveRate.toFixed(1)}%</p></div></div><p style="font-size:11px;color:var(--t3);margin-top:12px;font-style:italic">Estimate only — not tax advice. Consult a CPA for your specific situation.</p></div>`;}
+function runBreakEven(){const fixed=Number(document.getElementById('be-fixed')?.value)||0,variable=Number(document.getElementById('be-variable')?.value)||0;if(variable>=100){alert('Variable costs cannot be 100% or more.');return;}beFixed=fixed;beVariable=variable;beResult=Math.round(fixed/(1-variable/100));const box=document.getElementById('be-result-box');if(box)box.innerHTML=renderBreakEven();}
+function renderBreakEven(){if(beResult===null)return'';return`<div class="tools-result" style="text-align:center"><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Monthly break-even point</p><p style="font-size:40px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--p1);margin-bottom:6px">${fmt(beResult)}</p><p style="font-size:13px;color:var(--t2);margin-bottom:1rem">You need to earn at least this much each month to cover your costs</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:6px;overflow:hidden">${[['Fixed expenses',fmt(beFixed)],['Variable costs',beVariable+'%'],['Daily target',fmt(Math.round(beResult/30))]].map(([l,v])=>`<div style="background:var(--bg-c);padding:.75rem;text-align:center"><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:4px">${l}</div><div style="font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1)">${v}</div></div>`).join('')}</div></div>`;}
 
 // PREDICTION
-function predictNextMonth(md){
-  if(md.length<2)return null;
-  const n=md.length,sx=md.reduce((s,_,i)=>s+i,0),sy=md.reduce((s,m)=>s+m.revenue,0);
-  const sxy=md.reduce((s,m,i)=>s+i*m.revenue,0),sx2=md.reduce((s,_,i)=>s+i*i,0);
-  const slope=(n*sxy-sx*sy)/(n*sx2-sx*sx);
-  const intercept=(sy-slope*sx)/n;
-  return Math.max(0,Math.round(slope*n+intercept));
+function predictNextMonth(md){if(md.length<2)return null;const n=md.length,sx=md.reduce((s,_,i)=>s+i,0),sy=md.reduce((s,m)=>s+m.revenue,0),sxy=md.reduce((s,m,i)=>s+i*m.revenue,0),sx2=md.reduce((s,_,i)=>s+i*i,0),slope=(n*sxy-sx*sy)/(n*sx2-sx*sx),intercept=(sy-slope*sx)/n;return Math.max(0,Math.round(slope*n+intercept));}
+
+// CALENDAR FUNCTIONS
+function prevMonth(){if(calMonth===0){calMonth=11;calYear--;}else calMonth--;calSelectedDay=null;render();}
+function nextMonth(){if(calMonth===11){calMonth=0;calYear++;}else calMonth++;calSelectedDay=null;render();}
+function selectDay(d){calSelectedDay=calSelectedDay===d?null:d;render();}
+function saveDayEntry(y,m,d){
+  const revenue=Number(document.getElementById('day-rev')?.value)||0;
+  const expenses=Number(document.getElementById('day-exp')?.value)||0;
+  const hours=Number(document.getElementById('day-hrs')?.value)||0;
+  const note=document.getElementById('day-note')?.value||'';
+  const r=getR();if(!r)return;
+  const k=dayKey(y,m,d);
+  const daily_data={...r.daily_data,[k]:{revenue,expenses,hours,note}};
+  updR({daily_data});calSelectedDay=null;
+}
+function clearDayEntry(y,m,d){
+  const r=getR();if(!r)return;
+  const k=dayKey(y,m,d);
+  const daily_data={...r.daily_data};
+  delete daily_data[k];
+  updR({daily_data});calSelectedDay=null;
+}
+
+// CALENDAR RENDER
+function renderCalendarTab(r,p1,p2){
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const today=new Date();
+  const isNow=today.getMonth()===calMonth&&today.getFullYear()===calYear;
+  let mRev=0,mExp=0,mHrs=0,dLogged=0;
+  for(let d=1;d<=dim;d++){const k=dayKey(calYear,calMonth,d),dt=r.daily_data?.[k];if(dt){mRev+=dt.revenue||0;mExp+=dt.expenses||0;mHrs+=dt.hours||0;if(dt.revenue>0||dt.expenses>0)dLogged++;}}
+  const mProfit=mRev-mExp;
+  let h='';
+  h+=`<div class="cal-notice">ℹ️ Data entered here is separate from your monthly totals in Overview. Use whichever method works for you — both are valid.</div>`;
+  h+=`<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+      <button class="btn" onclick="prevMonth()">←</button>
+      <div style="text-align:center">
+        <p style="font-size:20px;font-weight:700;letter-spacing:-.5px">${MN[calMonth]} ${calYear}</p>
+        <p style="font-size:11px;color:var(--t3);margin-top:3px">${dLogged} of ${dim} days logged</p>
+      </div>
+      <button class="btn" onclick="nextMonth()">→</button>
+    </div>`;
+  if(mRev>0||mExp>0){h+=`<div class="kpi-grid" style="margin-bottom:1.25rem">${[{l:'Month revenue',v:fmt(mRev),c:p1},{l:'Month expenses',v:fmt(mExp),c:'var(--err)'},{l:'Net profit',v:fmt(mProfit),c:mProfit>=0?'var(--ok)':'var(--err)'},{l:'Hours logged',v:String(mHrs),c:'var(--t2)'}].map(k=>`<div class="kpi"><div class="kpi-l">${k.l}</div><div class="kpi-v" style="color:${k.c};font-size:18px">${k.v}</div></div>`).join('')}</div>`;}
+  h+=`<div class="cal-grid" style="margin-bottom:3px">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-dh">${d}</div>`).join('')}</div>`;
+  h+=`<div class="cal-grid">`;
+  for(let i=0;i<firstDay;i++)h+=`<div class="cal-empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const k=dayKey(calYear,calMonth,d),dt=r.daily_data?.[k];
+    const hasR=dt?.revenue>0,hasE=dt?.expenses>0,hasData=hasR||hasE;
+    const isSel=calSelectedDay===d,isTod=isNow&&today.getDate()===d;
+    h+=`<div class="cal-cell ${isSel?'sel':''} ${hasData?'has':''} ${isTod?'tod':''}" onclick="selectDay(${d})">
+      <span class="day-n">${d}${isTod?` <span style="font-size:8px;background:var(--p1);color:#fff;border-radius:3px;padding:0 3px;vertical-align:middle">today</span>`:''}</span>
+      ${hasR?`<span class="day-r">+${fmt(dt.revenue)}</span>`:''}
+      ${hasE?`<span class="day-e">-${fmt(dt.expenses)}</span>`:''}
+      ${dt?.note?`<span class="day-nt">${dt.note}</span>`:''}
+    </div>`;
+  }
+  h+=`</div></div>`;
+  if(calSelectedDay!==null){
+    const k=dayKey(calYear,calMonth,calSelectedDay),dt=r.daily_data?.[k]||{revenue:0,expenses:0,hours:0,note:''};
+    h+=`<div class="card" style="animation:fade .2s ease">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <p class="ct" style="margin:0">${MN[calMonth]} ${calSelectedDay}, ${calYear}</p>
+        <button class="btn sm" onclick="calSelectedDay=null;render()">✕ Close</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+        <div><label class="al">Revenue ($)</label><input type="number" class="nim" value="${dt.revenue||0}" id="day-rev" min="0" placeholder="0"></div>
+        <div><label class="al">Expenses ($)</label><input type="number" class="nim" value="${dt.expenses||0}" id="day-exp" min="0" placeholder="0"></div>
+        <div><label class="al">Hours</label><input type="number" class="nim" value="${dt.hours||0}" id="day-hrs" min="0" step="0.5" placeholder="0"></div>
+      </div>
+      <div style="margin-bottom:14px"><label class="al">Note</label><input type="text" class="di" value="${dt.note||''}" id="day-note" placeholder="e.g. Invoice from Acme Corp, Adobe subscription..."></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn blue" onclick="saveDayEntry(${calYear},${calMonth},${calSelectedDay})">Save →</button>
+        ${(dt.revenue>0||dt.expenses>0||dt.note)?`<button class="btn" onclick="clearDayEntry(${calYear},${calMonth},${calSelectedDay})" style="color:var(--err);border-color:rgba(239,68,68,.2)">Clear day</button>`:''}
+      </div>
+    </div>`;
+  }
+  const days=Array.from({length:dim},(_,i)=>i+1);
+  const hasChart=days.some(d=>{const k=dayKey(calYear,calMonth,d);return r.daily_data?.[k]?.revenue>0||r.daily_data?.[k]?.expenses>0;});
+  if(hasChart){
+    h+=`<div class="cg">
+      <div class="card"><p class="ct">Daily revenue vs expenses</p><div class="leg"><span><span class="ld" style="background:${p1}"></span>Revenue</span><span><span class="ld" style="background:${p2}"></span>Expenses</span></div><div class="cw"><canvas id="cCalDaily" role="img" aria-label="Daily revenue vs expenses">Daily data.</canvas></div></div>
+      <div class="card"><p class="ct">Cumulative profit — ${MN[calMonth]}</p><div class="cw"><canvas id="cCalCum" role="img" aria-label="Cumulative profit">Cumulative profit.</canvas></div></div>
+    </div>`;
+  }
+  return h;
 }
 
 // AUTH
@@ -312,8 +343,8 @@ async function doSignOut(){await sb.auth.signOut();user=null;reports=[];activeId
 async function initApp(u){user=u;uname=u.user_metadata?.name||u.email.split('@')[0];await loadReports();document.getElementById('auth-screen').style.display='none';document.getElementById('app').style.display='flex';render();}
 
 // DB
-async function loadReports(){const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:(d.month_data||[]).map(m=>({...DEF,...m})),clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||''}));activeId=reports[0].id;}}
-async function saveToDB(r){const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights};if(r.db_id){await sb.from('reports').update(p).eq('id',r.db_id);}else{const{data}=await sb.from('reports').insert(p).select().single();if(data){r.db_id=data.id;r.id=data.id;}}}
+async function loadReports(){const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:(d.month_data||[]).map(m=>({...DEF,...m})),clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||'',daily_data:d.daily_data||{}}));activeId=reports[0].id;}}
+async function saveToDB(r){const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data};if(r.db_id){await sb.from('reports').update(p).eq('id',r.db_id);}else{const{data}=await sb.from('reports').insert(p).select().single();if(data){r.db_id=data.id;r.id=data.id;}}}
 function schedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const r=getR();if(r)saveToDB(r);},1000);}
 function updR(u){const r=getR();if(!r)return;Object.assign(r,u);schedSave();render();}
 async function newReport(){const r=makeReport('Report '+(reports.length+1));reports.push(r);activeId=r.id;await saveToDB(r);activeMonth=0;render();}
@@ -339,25 +370,7 @@ if(importStep==='preview'&&importPreview){return`<div style="max-width:800px;mar
 return'';}
 
 // API GUIDE MODAL
-function renderApiGuide(){
-  return`<div class="modal-overlay" onclick="if(event.target===this){showApiGuide=false;render()}">
-    <div class="modal-box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-        <p style="font-size:16px;font-weight:700;color:var(--t1);letter-spacing:-.3px">How to get your API key</p>
-        <button class="btn sm" onclick="showApiGuide=false;render()">✕</button>
-      </div>
-      ${[['Go to','console.anthropic.com','https://console.anthropic.com'],['Sign up','Create a free account — takes 2 minutes',null],['Find API Keys','Click "API Keys" in the left sidebar',null],['Create a key','Click "Create Key" and name it "myNovaDash"',null],['Copy the key','It starts with sk-ant- — you can only see it once',null],['Paste and save','Paste it in the field below and click Save — you\'re done',null]].map(([title,desc,link],i)=>`<div style="display:flex;gap:12px;margin-bottom:14px"><div class="step-badge">${i+1}</div><div><p style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${title}</p><p style="font-size:12px;color:var(--t2)">${link?`<a href="${link}" target="_blank" style="color:var(--p1)">${desc}</a>`:desc}</p></div></div>`).join('')}
-      <div class="info-green" style="margin-top:1rem">
-        <p style="font-size:11px;font-weight:600;color:#16A34A;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">💡 What does it cost?</p>
-        <p style="font-size:13px;color:var(--t2);line-height:1.7">Each AI insight generation costs roughly $0.01–$0.03 — literally less than a penny. Even if you used it every single day for a month, you'd spend less than $1 total. For normal use a few times a week, you'll spend virtually nothing. Most users spend under $0.50 a month.</p>
-      </div>
-      <div class="info-blue" style="margin-top:10px">
-        <p style="font-size:11px;font-weight:600;color:var(--p1);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">🔒 Your privacy — completely protected</p>
-        <p style="font-size:13px;color:var(--t2);line-height:1.7">Your API key is stored only in your browser. We never see it, never store it on our servers, and it never leaves your device. Every AI request goes directly from your browser to Anthropic — myNovaDash is never in the middle of that communication.</p>
-      </div>
-    </div>
-  </div>`;
-}
+function renderApiGuide(){return`<div class="modal-overlay" onclick="if(event.target===this){showApiGuide=false;render()}"><div class="modal-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem"><p style="font-size:16px;font-weight:700;color:var(--t1);letter-spacing:-.3px">How to get your API key</p><button class="btn sm" onclick="showApiGuide=false;render()">✕</button></div>${[['Go to','console.anthropic.com','https://console.anthropic.com'],['Sign up','Create a free account — takes 2 minutes',null],['Find API Keys','Click "API Keys" in the left sidebar',null],['Create a key','Click "Create Key" and name it "myNovaDash"',null],['Copy the key','It starts with sk-ant- — you can only see it once',null],['Paste and save','Paste it in the field below and click Save — you\'re done',null]].map(([title,desc,link],i)=>`<div style="display:flex;gap:12px;margin-bottom:14px"><div class="step-badge">${i+1}</div><div><p style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:2px">${title}</p><p style="font-size:12px;color:var(--t2)">${link?`<a href="${link}" target="_blank" style="color:var(--p1)">${desc}</a>`:desc}</p></div></div>`).join('')}<div class="info-green" style="margin-top:1rem"><p style="font-size:11px;font-weight:600;color:#16A34A;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">💡 What does it cost?</p><p style="font-size:13px;color:var(--t2);line-height:1.7">Each AI insight generation costs roughly $0.01–$0.03 — literally less than a penny. Even if you used it every single day for a month, you'd spend less than $1 total. For normal use a few times a week, you'll spend virtually nothing. Most users spend under $0.50 a month.</p></div><div class="info-blue" style="margin-top:10px"><p style="font-size:11px;font-weight:600;color:var(--p1);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">🔒 Your privacy — completely protected</p><p style="font-size:13px;color:var(--t2);line-height:1.7">Your API key is stored only in your browser. We never see it, never store it on our servers, and it never leaves your device. Every AI request goes directly from your browser to Anthropic — myNovaDash is never in the middle of that communication.</p></div></div></div>`;}
 
 // CHARTS
 function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
@@ -369,7 +382,7 @@ function render(){
   destroyCharts();
   const ib=document.getElementById('import-btn');if(ib)ib.className='nb'+(showImport?' active':'');
   const tb=document.getElementById('theme-btn');if(tb)tb.className='nb'+(showTheme?' active':'');
-  if(showApiGuide){const overlay=document.getElementById('api-modal');if(!overlay){const el=document.createElement('div');el.id='api-modal';el.innerHTML=renderApiGuide();document.body.appendChild(el);}else{overlay.innerHTML=renderApiGuide();}}else{const overlay=document.getElementById('api-modal');if(overlay)overlay.innerHTML='';}
+  if(showApiGuide){let overlay=document.getElementById('api-modal');if(!overlay){overlay=document.createElement('div');overlay.id='api-modal';document.body.appendChild(overlay);}overlay.innerHTML=renderApiGuide();}else{const overlay=document.getElementById('api-modal');if(overlay)overlay.innerHTML='';}
   if(showImport){document.getElementById('content').innerHTML=renderImportUI();if(importStep==='upload')setTimeout(setupDropZone,50);return;}
   const r=getR();if(!r)return;
   const pal=PALETTES[themePalette]||PALETTES.nova,CLR=pal.charts,p1=pal.p1,p2=pal.p2;
@@ -381,26 +394,25 @@ function render(){
   const prediction=predictNextMonth(r.month_data);
   let h='';
 
-  if(showTheme){h+=`<div class="theme-panel"><div style="display:flex;justify-content:space-between;align-items:center"><div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Mode</p><div class="mode-btns"><button class="mode-btn ${themeMode==='dark'?'active':''}" onclick="setMode('dark')">Dark</button><button class="mode-btn ${themeMode==='light'?'active':''}" onclick="setMode('light')">Light</button></div></div><div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Accent color</p><div class="palette-grid">${Object.entries(PALETTES).map(([key,p])=>`<div title="${p.name}" class="pal-swatch" onclick="setPalette('${key}')" style="background:${hexRgba(p.p1,.15)};border-color:${themePalette===key?p.p1:'transparent'}"><div class="pal-inner" style="background:${p.p1}"></div></div>`).join('')}</div></div></div></div>`;}
+  if(showTheme){h+=`<div class="theme-panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap"><div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Mode</p><div class="mode-btns"><button class="mode-btn ${themeMode==='dark'?'active':''}" onclick="setMode('dark')">Dark</button><button class="mode-btn ${themeMode==='light'?'active':''}" onclick="setMode('light')">Light</button></div></div><div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Accent color</p><div class="palette-grid">${Object.entries(PALETTES).map(([key,p])=>`<div title="${p.name}" class="pal-swatch" onclick="setPalette('${key}')" style="background:${hexRgba(p.p1,.15)};border-color:${themePalette===key?p.p1:'transparent'}"><div class="pal-inner" style="background:${p.p1}"></div></div>`).join('')}</div></div></div></div>`;}
+
   h+=`<div class="rbar"><span style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;flex-shrink:0">Reports</span>${reports.map(rep=>`<button class="chip ${rep.id===activeId?'active':''}" onclick="switchR('${rep.id}')">${rep.name}</button>`).join('')}<button class="chip" onclick="newReport()">+ New</button>${reports.length>1?`<button class="chip red" onclick="delReport()">Delete</button>`:''}<input class="rni" value="${r.name}" onchange="updR({name:this.value})" placeholder="Report name"></div>`;
+
   if(showShare){const code=btoa(JSON.stringify({name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals}));h+=`<div class="sp"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><p style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em">Share report</p><button class="btn sm" onclick="toggleShare()">Close</button></div><p style="font-size:12px;color:var(--t3);margin-bottom:10px">Copy this code and share it. Recipients paste it below to import.</p><textarea readonly onclick="this.select()">${code}</textarea><div style="display:flex;gap:8px"><input id="load-input" type="text" placeholder="Paste share code to import..." class="di" style="flex:1"><button class="btn blue sm" onclick="importReport()">Import</button></div></div>`;}
+
   h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;gap:12px"><div style="flex:1;min-width:0"><input value="${r.biz_name}" onchange="updR({biz_name:this.value})" style="font-size:20px;font-weight:700;border:none;background:transparent;color:var(--t1);width:100%;padding:0;outline:none;font-family:'Space Grotesk',sans-serif;letter-spacing:-.5px"><p style="font-size:11px;color:var(--t3);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">${uname}&nbsp;&nbsp;·&nbsp;&nbsp;${labels[0]?.label} — ${labels[labels.length-1]?.label}</p></div></div>`;
-  h+=`<div class="tabs">${['overview','clients','goals','compare','tools'].map(t=>`<button class="tab-btn ${tab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}</div>`;
+  h+=`<div class="tabs">${['overview','calendar','clients','goals','compare','tools'].map(t=>`<button class="tab-btn ${tab===t?'active':''}" onclick="switchTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}</div>`;
 
   if(tab==='overview'){
     h+=`<div class="card"><p class="ct">Report period</p><div class="pr"><div><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Start month</label><select onchange="updR({start_month:parseInt(this.value)})">${MN.map((m,i)=>`<option value="${i}"${r.start_month===i?' selected':''}>${m}</option>`).join('')}</select></div><div><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Start year</label><select onchange="updR({start_year:parseInt(this.value)})">${YEARS.map(y=>`<option value="${y}"${r.start_year===y?' selected':''}>${y}</option>`).join('')}</select></div><div><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Duration</label><div style="display:flex;gap:5px">${[3,6,9,12].map(d=>`<button class="chip ${r.duration===d?'active':''}" onclick="setDur(${d})">${d}mo</button>`).join('')}</div></div></div></div>`;
     h+=`<div class="kpi-grid">${[{l:'Total revenue',v:fmt(totRev),c:p1},{l:'Net profit',v:fmt(netP),c:netP>=0?'var(--ok)':'var(--err)'},{l:'Profit margin',v:pct(pMgn),c:pMgn>=20?'var(--ok)':'var(--err)'},{l:'Effective rate',v:fmtR(effR),c:p2},{l:'Avg monthly',v:fmt(avgR),c:'var(--t1)'},{l:'Total projects',v:String(totProj),c:'var(--t2)'}].map(k=>`<div class="kpi"><div class="kpi-l">${k.l}</div><div class="kpi-v" style="color:${k.c}">${k.v}</div></div>`).join('')}</div>`;
     if(prediction!==null){const trend=prediction>avgR;h+=`<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center"><div><p class="ct" style="margin-bottom:4px">AI trend prediction</p><p style="font-size:11px;color:var(--t3)">Linear trend based on ${r.duration} months of data</p></div><div style="text-align:right"><p style="font-size:11px;color:var(--t3);margin-bottom:2px">Projected next month</p><p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${trend?'var(--ok)':'var(--err)'}">${fmt(prediction)}</p><p style="font-size:11px;color:${trend?'var(--ok)':'var(--err)'}">${trend?'↑':'↓'} ${Math.abs(((prediction-avgR)/avgR)*100).toFixed(1)}% vs avg</p></div></div></div>`;}
     h+=`<div class="cg"><div class="card"><p class="ct">Revenue vs expenses</p><div class="leg"><span><span class="ld" style="background:${p1}"></span>Revenue</span><span><span class="ld" style="background:${p2}"></span>Expenses</span></div><div class="cw"><canvas id="cRev" role="img" aria-label="Revenue vs expenses">Monthly data.</canvas></div></div><div class="card"><p class="ct">Monthly net profit</p><div class="cw"><canvas id="cProfit" role="img" aria-label="Net profit">Profit data.</canvas></div></div></div>`;
-    h+=`<div class="card"><p class="ct">Edit monthly data</p><div class="mchips">${labels.map((l,i)=>`<button class="chip ${activeMonth===i?'active':''}" onclick="setAM(${i})">${l.short}</button>`).join('')}</div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">${labels[activeMonth]?.label||''}</p>
-    <div class="ig">${[{f:'revenue',l:'Revenue ($)'},{f:'expenses',l:'Expenses ($)'},{f:'hours',l:'Hours'},{f:'clients',l:'Clients'},{f:'projects',l:'Projects'}].map(({f,l})=>`<div><label>${l}</label><input type="number" class="nim" value="${r.month_data[activeMonth]?.[f]??0}" onchange="updMD(${activeMonth},'${f}',this.value)"></div>`).join('')}</div>
-    <div style="margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--t2);font-weight:500">Income type:</span><button class="chip ${r.month_data[activeMonth]?.recurring?'active':''}" onclick="updMD(${activeMonth},'recurring',${!r.month_data[activeMonth]?.recurring})">${r.month_data[activeMonth]?.recurring?'✓ Recurring':'One-time'}</button></div>
-    </div>
-    <div style="margin-top:12px"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Notes for ${labels[activeMonth]?.label||'this month'}</label><textarea class="di" style="height:56px;resize:vertical;font-size:13px" placeholder="e.g. Landed new client, took vacation, slow month..." oninput="updMD(${activeMonth},'notes',this.value)">${r.month_data[activeMonth]?.notes||''}</textarea></div>
-    </div>`;
+    h+=`<div class="card"><p class="ct">Edit monthly data</p><div class="mchips">${labels.map((l,i)=>`<button class="chip ${activeMonth===i?'active':''}" onclick="setAM(${i})">${l.short}</button>`).join('')}</div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">${labels[activeMonth]?.label||''}</p><div class="ig">${[{f:'revenue',l:'Revenue ($)'},{f:'expenses',l:'Expenses ($)'},{f:'hours',l:'Hours'},{f:'clients',l:'Clients'},{f:'projects',l:'Projects'}].map(({f,l})=>`<div><label>${l}</label><input type="number" class="nim" value="${r.month_data[activeMonth]?.[f]??0}" onchange="updMD(${activeMonth},'${f}',this.value)"></div>`).join('')}</div><div style="margin-top:12px;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--t2);font-weight:500">Income type:</span><button class="chip ${r.month_data[activeMonth]?.recurring?'active':''}" onclick="updMD(${activeMonth},'recurring',${!r.month_data[activeMonth]?.recurring})">${r.month_data[activeMonth]?.recurring?'✓ Recurring':'One-time'}</button></div><div style="margin-top:12px"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Notes for ${labels[activeMonth]?.label||'this month'}</label><textarea class="di" style="height:56px;resize:vertical;font-size:13px" placeholder="e.g. Landed new client, took vacation..." oninput="updMD(${activeMonth},'notes',this.value)">${r.month_data[activeMonth]?.notes||''}</textarea></div></div>`;
     h+=`<div class="card"><div class="ih"><div><p style="font-size:13px;font-weight:600;color:var(--t1)">AI business insights</p><p style="font-size:11px;color:var(--t3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Included in PDF export</p></div><button class="gb" id="gen-btn" onclick="genInsights()" ${!apiKey?'disabled':''}>${!apiKey?'Add API key below':'Generate insights →'}</button></div>${!apiKey?`<div class="an">Enter your Anthropic API key to enable AI insights and import features. <a href="https://console.anthropic.com" target="_blank">Get one free →</a> &nbsp;<a onclick="showApiGuide=true;render()" style="cursor:pointer;color:var(--warn)">How does it work?</a><div style="display:flex;gap:8px;margin-top:10px"><input id="api-input" type="password" placeholder="sk-ant-..." class="di" style="border-color:rgba(234,179,8,.2)"><button class="btn sm" onclick="saveKey()" style="background:#CA8A04;color:#fff;border-color:#CA8A04">Save</button></div></div>`:''} ${r.insights?`<div class="ib">${r.insights}</div>`:'<div id="ins-out"></div>'}</div>`;
   }
+
+  if(tab==='calendar'){h+=renderCalendarTab(r,p1,p2);}
 
   if(tab==='clients'){
     h+=`<div class="card"><p class="ct">Add client</p><div style="display:flex;gap:10px;align-items:flex-end"><div style="flex:2"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Name</label><input id="cn" type="text" placeholder="Acme Corp" class="di"></div><div style="flex:1"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Revenue ($)</label><input id="cr" type="number" value="1000" class="nim"></div><button class="btn blue" onclick="addClient()">Add</button></div></div>`;
@@ -423,26 +435,8 @@ function render(){
 
   if(tab==='tools'){
     const annualNetP=netP/r.duration*12;
-    h+=`<div class="card"><p class="ct">Tax estimator</p>
-    <p style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:1rem">Estimate your quarterly tax payment based on your state, filing status, and net profit. <strong style="color:var(--t1)">This is for planning purposes only</strong> — always consult a tax professional for exact figures.</p>
-    <div class="tools-grid">
-      <div><label class="al">State</label><select id="tax-state" class="di" style="padding:8px 10px" onchange="taxState=this.value">${STATES.map(s=>`<option value="${s.c}"${taxState===s.c?' selected':''}>${s.n}${s.r===0?' (no income tax)':''}</option>`).join('')}</select></div>
-      <div><label class="al">Filing status</label><select id="tax-filing" class="di" style="padding:8px 10px" onchange="taxFiling=this.value"><option value="single"${taxFiling==='single'?' selected':''}>Single</option><option value="married"${taxFiling==='married'?' selected':''}>Married filing jointly</option></select></div>
-      <div><label class="al">Annual net profit ($)</label><input type="number" class="nim" id="tax-income" value="${Math.round(annualNetP)||0}" placeholder="Enter your annual net profit"></div>
-    </div>
-    <button class="btn blue" onclick="runTaxCalc()">Calculate taxes →</button>
-    <div id="tax-result-box">${taxResult?renderTaxResult():''}</div>
-    </div>`;
-
-    h+=`<div class="card"><p class="ct">Break-even calculator</p>
-    <p style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:1rem">Find out exactly how much revenue you need to earn each month to cover your costs and break even.</p>
-    <div class="tools-grid">
-      <div><label class="al">Monthly fixed expenses ($)</label><input type="number" class="nim" id="be-fixed" value="${beFixed||Math.round(totRev>0?totRev/r.duration*.5:0)}" placeholder="Rent, software, etc."></div>
-      <div><label class="al">Variable costs (% of revenue)</label><input type="number" class="nim" id="be-variable" value="${beVariable}" min="0" max="99" placeholder="0"></div>
-    </div>
-    <button class="btn blue" onclick="runBreakEven()">Calculate →</button>
-    <div id="be-result-box">${beResult!==null?renderBreakEven():''}</div>
-    </div>`;
+    h+=`<div class="card"><p class="ct">Tax estimator</p><p style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:1rem">Estimate your quarterly tax payment based on your state, filing status, and net profit. <strong style="color:var(--t1)">This is for planning purposes only</strong> — always consult a tax professional for exact figures.</p><div class="tools-grid"><div><label class="al">State</label><select id="tax-state" class="di" style="padding:8px 10px" onchange="taxState=this.value">${STATES.map(s=>`<option value="${s.c}"${taxState===s.c?' selected':''}>${s.n}${s.r===0?' (no income tax)':''}</option>`).join('')}</select></div><div><label class="al">Filing status</label><select id="tax-filing" class="di" style="padding:8px 10px" onchange="taxFiling=this.value"><option value="single"${taxFiling==='single'?' selected':''}>Single</option><option value="married"${taxFiling==='married'?' selected':''}>Married filing jointly</option></select></div><div><label class="al">Annual net profit ($)</label><input type="number" class="nim" id="tax-income" value="${Math.round(annualNetP)||0}" placeholder="Enter your annual net profit"></div></div><button class="btn blue" onclick="runTaxCalc()">Calculate taxes →</button><div id="tax-result-box">${taxResult?renderTaxResult():''}</div></div>`;
+    h+=`<div class="card"><p class="ct">Break-even calculator</p><p style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:1rem">Find out exactly how much revenue you need to earn each month to cover your costs and break even.</p><div class="tools-grid"><div><label class="al">Monthly fixed expenses ($)</label><input type="number" class="nim" id="be-fixed" value="${beFixed}" placeholder="Rent, software, etc."></div><div><label class="al">Variable costs (% of revenue)</label><input type="number" class="nim" id="be-variable" value="${beVariable}" min="0" max="99" placeholder="0"></div></div><button class="btn blue" onclick="runBreakEven()">Calculate →</button><div id="be-result-box">${beResult!==null?renderBreakEven():''}</div></div>`;
   }
 
   document.getElementById('content').innerHTML=h;
@@ -452,8 +446,29 @@ function render(){
 function doCharts(r,agg,compR,compAgg,sl,p1,p2,CLR){
   const o=getChartOpts(v=>'$'+Math.round(v/1000)+'k');
   const oF=cb=>({...o,scales:{...o.scales,y:{...o.scales.y,ticks:{...o.scales.y.ticks,callback:cb}}}});
-  if(tab==='overview'){mkChart('cRev',{type:'line',data:{labels:sl,datasets:[{label:'Revenue',data:r.month_data.map(m=>m.revenue),borderColor:p1,borderWidth:1.5,pointRadius:0,tension:.4},{label:'Expenses',data:r.month_data.map(m=>m.expenses),borderColor:p2,borderWidth:1.5,pointRadius:0,tension:.4}]},options:o});mkChart('cProfit',{type:'bar',data:{labels:sl,datasets:[{label:'Profit',data:r.month_data.map(m=>m.revenue-m.expenses),backgroundColor:r.month_data.map(m=>m.revenue-m.expenses>=0?p1:p2),borderRadius:2}]},options:o});}
-  if(tab==='clients'&&r.clients.length){mkChart('cClPie',{type:'doughnut',data:{labels:r.clients.map(c=>c.name),datasets:[{data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length),borderWidth:0,hoverOffset:4}]},options:{...o,cutout:'65%'}});mkChart('cClBar',{type:'bar',data:{labels:r.clients.map(c=>c.name),datasets:[{label:'Revenue',data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length),borderRadius:2}]},options:oF(v=>fmt(v))});}
+  if(tab==='overview'){
+    mkChart('cRev',{type:'line',data:{labels:sl,datasets:[{label:'Revenue',data:r.month_data.map(m=>m.revenue),borderColor:p1,borderWidth:1.5,pointRadius:0,tension:.4},{label:'Expenses',data:r.month_data.map(m=>m.expenses),borderColor:p2,borderWidth:1.5,pointRadius:0,tension:.4}]},options:o});
+    mkChart('cProfit',{type:'bar',data:{labels:sl,datasets:[{label:'Profit',data:r.month_data.map(m=>m.revenue-m.expenses),backgroundColor:r.month_data.map(m=>m.revenue-m.expenses>=0?p1:p2),borderRadius:2}]},options:o});
+  }
+  if(tab==='calendar'){
+    const dim=new Date(calYear,calMonth+1,0).getDate();
+    const days=Array.from({length:dim},(_,i)=>i+1);
+    const revs=days.map(d=>{const k=dayKey(calYear,calMonth,d);return r.daily_data?.[k]?.revenue||0;});
+    const exps=days.map(d=>{const k=dayKey(calYear,calMonth,d);return r.daily_data?.[k]?.expenses||0;});
+    let run=0;
+    const cum=revs.map((rv,i)=>{run+=rv-exps[i];return run;});
+    const dayLabels=days.map(String);
+    const hasChart=revs.some(v=>v>0)||exps.some(v=>v>0);
+    if(hasChart){
+      mkChart('cCalDaily',{type:'bar',data:{labels:dayLabels,datasets:[{label:'Revenue',data:revs,backgroundColor:p1,borderRadius:2},{label:'Expenses',data:exps,backgroundColor:p2,borderRadius:2}]},options:{...o,scales:{...o.scales,x:{...o.scales.x,ticks:{...o.scales.x.ticks,maxTicksLimit:15}}}}});
+      const cumColor=cum[cum.length-1]>=0?'#22C55E':'#EF4444';
+      mkChart('cCalCum',{type:'line',data:{labels:dayLabels,datasets:[{label:'Cumulative profit',data:cum,borderColor:cumColor,borderWidth:1.5,pointRadius:0,tension:.3,fill:true,backgroundColor:cum[cum.length-1]>=0?'rgba(34,197,94,0.06)':'rgba(239,68,68,0.06)'}]},options:{...o,scales:{...o.scales,x:{...o.scales.x,ticks:{...o.scales.x.ticks,maxTicksLimit:15}}}}});
+    }
+  }
+  if(tab==='clients'&&r.clients.length){
+    mkChart('cClPie',{type:'doughnut',data:{labels:r.clients.map(c=>c.name),datasets:[{data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length),borderWidth:0,hoverOffset:4}]},options:{...o,cutout:'65%'}});
+    mkChart('cClBar',{type:'bar',data:{labels:r.clients.map(c=>c.name),datasets:[{label:'Revenue',data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length),borderRadius:2}]},options:oF(v=>fmt(v))});
+  }
   if(tab==='goals'){mkChart('cGoal',{type:'bar',data:{labels:sl,datasets:[{label:'Revenue',data:r.month_data.map(m=>m.revenue),backgroundColor:p1,borderRadius:2},{label:'Goal',data:r.month_data.map(()=>r.goals.revenue),backgroundColor:p2,borderRadius:2}]},options:o});}
   if(tab==='compare'&&compR){const ml=Math.max(r.duration,compR.duration);mkChart('cCmp',{type:'line',data:{labels:Array.from({length:ml},(_,i)=>`Mo ${i+1}`),datasets:[{label:r.name,data:Array.from({length:ml},(_,i)=>r.month_data[i]?.revenue??null),borderColor:p1,borderWidth:1.5,pointRadius:0,tension:.4,spanGaps:true},{label:compR.name,data:Array.from({length:ml},(_,i)=>compR.month_data[i]?.revenue??null),borderColor:p2,borderWidth:1.5,pointRadius:0,tension:.4,spanGaps:true}]},options:o});}
 }
@@ -474,9 +489,9 @@ function saveKey(){const k=document.getElementById('api-input')?.value.trim();if
 
 async function genInsights(){const r=getR(),key=localStorage.getItem('nd_api_key');if(!key)return;const labels=getLabels(r.start_month,r.start_year,r.duration),agg=calcAgg(r),{totRev,netP,pMgn,effR}=agg,btn=document.getElementById('gen-btn'),out=document.getElementById('ins-out');if(btn){btn.disabled=true;btn.textContent='Analyzing...';}if(out)out.innerHTML='<div class="ib">Analyzing your data...</div>';const sum=r.month_data.map((m,i)=>`${labels[i]?.label}: Revenue $${m.revenue}, Expenses $${m.expenses}, Hours ${m.hours}, Projects ${m.projects}${m.notes?', Note: '+m.notes:''}`).join('\n'),cSum=r.clients.length?'\nClients: '+r.clients.map(c=>`${c.name} $${c.revenue}`).join(', '):'';try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'You are a sharp freelance business analyst. Return exactly 6 numbered, specific, actionable insights. Be direct, data-driven, include actual numbers. Cover trends, efficiency, pricing, risk, growth. Max 2 sentences each. No preamble.',messages:[{role:'user',content:`Business: ${r.biz_name}\nPeriod: ${labels[0]?.label}–${labels[labels.length-1]?.label}\n${sum}${cSum}\nGoal: $${r.goals.revenue}/mo\nTotals: Revenue ${fmt(totRev)}, Profit ${fmt(netP)}, Margin ${pct(pMgn)}, Rate ${fmtR(effR)}`}]})});const d=await res.json();if(d.error)throw new Error(d.error.message);const text=d.content?.map(b=>b.text||'').join('')||'No insights returned.';updR({insights:text});}catch(e){if(out)out.innerHTML=`<div class="ib" style="color:var(--err)">Error: ${e.message}</div>`;if(btn){btn.disabled=false;btn.textContent='Generate insights →';}}}
 
-async function importReport(){const code=document.getElementById('load-input')?.value.trim();if(!code)return;try{const d=JSON.parse(atob(code));const nr={...d,id:uid(),db_id:null,name:(d.name||'Imported')+' (imported)',insights:'',month_data:(d.month_data||[]).map(m=>({...DEF,...m}))};reports.push(nr);activeId=nr.id;await saveToDB(nr);showShare=false;render();}catch{alert('Invalid share code.');}}
+async function importReport(){const code=document.getElementById('load-input')?.value.trim();if(!code)return;try{const d=JSON.parse(atob(code));const nr={...d,id:uid(),db_id:null,name:(d.name||'Imported')+' (imported)',insights:'',daily_data:{},month_data:(d.month_data||[]).map(m=>({...DEF,...m}))};reports.push(nr);activeId=nr.id;await saveToDB(nr);showShare=false;render();}catch{alert('Invalid share code.');}}
 
-async function exportPDF(){const r=getR(),btn=document.getElementById('pdf-btn');if(btn){btn.textContent='Exporting...';btn.disabled=true;}const pal=PALETTES[themePalette]||PALETTES.nova;const[r1,g1,b1]=h2r(pal.p1);try{if(!window.jspdf)await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const W=210,mg=18,cW=W-mg*2,labels=getLabels(r.start_month,r.start_year,r.duration),agg=calcAgg(r),{totRev,netP,pMgn,effR,avgR,totProj}=agg,period=`${labels[0]?.label} – ${labels[labels.length-1]?.label}`;doc.setFillColor(r1,g1,b1);doc.rect(0,0,W,40,'F');doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');doc.text(r.biz_name||'Freelance Business',mg,17);doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text(`Analytics Report · ${r.name}`,mg,25);doc.text(period,mg,32);doc.text(`${uname} · ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}`,W-mg,32,{align:'right'});let y=50;doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Key performance indicators',mg,y);y+=8;const kI=[['Total Revenue',fmt(totRev)],['Net Profit',fmt(netP)],['Profit Margin',pct(pMgn)],['Effective Rate',fmtR(effR)],['Avg Monthly',fmt(avgR)],['Total Projects',String(totProj)]],cw2=(cW-4)/2;kI.forEach(([lb,vl],i)=>{const col=i%2,row=Math.floor(i/2),x=mg+col*(cw2+4),ky=y+row*18;doc.setFillColor(240,240,245);doc.roundedRect(x,ky,cw2,15,2,2,'F');doc.setTextColor(130,130,150);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(lb.toUpperCase(),x+4,ky+6);doc.setTextColor(20,20,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text(vl,x+4,ky+12.5);});y+=Math.ceil(kI.length/2)*18+14;doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Monthly breakdown',mg,y);y+=7;const tC=['Month','Revenue','Expenses','Net Profit','Hours','Rate/Hr','Recurring','Notes'],tW=[18,24,24,24,16,16,20,28];const sw=tW.map(w=>w*cW/tW.reduce((a,b)=>a+b,0));doc.setFillColor(r1,g1,b1);doc.rect(mg,y,cW,8,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');let cx=mg;tC.forEach((c,i)=>{doc.text(c,cx+2,y+5.5);cx+=sw[i];});y+=8;r.month_data.forEach((m,idx)=>{const pr=m.revenue-m.expenses,r2=m.hours>0?Math.round(m.revenue/m.hours):0,cells=[labels[idx]?.short||'',fmt(m.revenue),fmt(m.expenses),fmt(pr),String(m.hours),`$${r2}`,m.recurring?'Yes':'No',(m.notes||'').slice(0,20)];if(idx%2===0){doc.setFillColor(248,248,252);doc.rect(mg,y,cW,7,'F');}doc.setTextColor(60,60,80);doc.setFontSize(7.5);doc.setFont('helvetica','normal');cx=mg;cells.forEach((c,i)=>{doc.text(String(c),cx+2,y+5);cx+=sw[i];});y+=7;});y+=12;if(r.clients.length){if(y>240){doc.addPage();y=20;}doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Client breakdown',mg,y);y+=7;const cCols=['Client','Revenue','% of Total'],cW2=[80,50,cW-130];doc.setFillColor(r1,g1,b1);doc.rect(mg,y,cW,8,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');cx=mg;cCols.forEach((c,i)=>{doc.text(c,cx+2,y+5.5);cx+=cW2[i];});y+=8;const cTot=r.clients.reduce((s,c)=>s+c.revenue,0);r.clients.forEach((c,i)=>{if(i%2===0){doc.setFillColor(248,248,252);doc.rect(mg,y,cW,7,'F');}doc.setTextColor(60,60,80);doc.setFontSize(7.5);doc.setFont('helvetica','normal');cx=mg;[c.name,fmt(c.revenue),cTot>0?(c.revenue/cTot*100).toFixed(1)+'%':'0%'].forEach((t,i2)=>{doc.text(t,cx+2,y+5);cx+=cW2[i2];});y+=7;});y+=12;}if(r.insights){if(y>240){doc.addPage();y=20;}doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('AI business insights',mg,y);y+=8;doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(80,80,100);doc.splitTextToSize(r.insights,cW).forEach(line=>{if(y>272){doc.addPage();y=20;}doc.text(line,mg,y);y+=5;});}const pc=doc.internal.getNumberOfPages();for(let p=1;p<=pc;p++){doc.setPage(p);doc.setFillColor(r1,g1,b1);doc.rect(0,285,W,12,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(`${r.biz_name} · ${r.name}`,mg,292);doc.text(`Page ${p} of ${pc}`,W-mg,292,{align:'right'});}doc.save((r.biz_name||'freelance').toLowerCase().replace(/\s+/g,'-')+'-'+r.name.toLowerCase().replace(/\s+/g,'-')+'.pdf');}catch(e){console.error(e);}if(btn){btn.textContent='Export PDF';btn.disabled=false;}}
+async function exportPDF(){const r=getR(),btn=document.getElementById('pdf-btn');if(btn){btn.textContent='Exporting...';btn.disabled=true;}const pal=PALETTES[themePalette]||PALETTES.nova;const[r1,g1,b1]=h2r(pal.p1);try{if(!window.jspdf)await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const W=210,mg=18,cW=W-mg*2,labels=getLabels(r.start_month,r.start_year,r.duration),agg=calcAgg(r),{totRev,netP,pMgn,effR,avgR,totProj}=agg,period=`${labels[0]?.label} – ${labels[labels.length-1]?.label}`;doc.setFillColor(r1,g1,b1);doc.rect(0,0,W,40,'F');doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');doc.text(r.biz_name||'Freelance Business',mg,17);doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text(`Analytics Report · ${r.name}`,mg,25);doc.text(period,mg,32);doc.text(`${uname} · ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}`,W-mg,32,{align:'right'});let y=50;doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Key performance indicators',mg,y);y+=8;const kI=[['Total Revenue',fmt(totRev)],['Net Profit',fmt(netP)],['Profit Margin',pct(pMgn)],['Effective Rate',fmtR(effR)],['Avg Monthly',fmt(avgR)],['Total Projects',String(totProj)]],cw2=(cW-4)/2;kI.forEach(([lb,vl],i)=>{const col=i%2,row=Math.floor(i/2),x=mg+col*(cw2+4),ky=y+row*18;doc.setFillColor(240,240,245);doc.roundedRect(x,ky,cw2,15,2,2,'F');doc.setTextColor(130,130,150);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(lb.toUpperCase(),x+4,ky+6);doc.setTextColor(20,20,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text(vl,x+4,ky+12.5);});y+=Math.ceil(kI.length/2)*18+14;doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Monthly breakdown',mg,y);y+=7;const tC=['Month','Revenue','Expenses','Net Profit','Hours','Rate/Hr'],tW=[22,28,28,28,20,20];const sw=tW.map(w=>w*cW/tW.reduce((a,b)=>a+b,0));doc.setFillColor(r1,g1,b1);doc.rect(mg,y,cW,8,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');let cx=mg;tC.forEach((c,i)=>{doc.text(c,cx+2,y+5.5);cx+=sw[i];});y+=8;r.month_data.forEach((m,idx)=>{const pr=m.revenue-m.expenses,r2=m.hours>0?Math.round(m.revenue/m.hours):0,cells=[labels[idx]?.short||'',fmt(m.revenue),fmt(m.expenses),fmt(pr),String(m.hours),`$${r2}`];if(idx%2===0){doc.setFillColor(248,248,252);doc.rect(mg,y,cW,7,'F');}doc.setTextColor(60,60,80);doc.setFontSize(7.5);doc.setFont('helvetica','normal');cx=mg;cells.forEach((c,i)=>{doc.text(String(c),cx+2,y+5);cx+=sw[i];});y+=7;});y+=12;if(r.clients.length){if(y>240){doc.addPage();y=20;}doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('Client breakdown',mg,y);y+=7;const cCols=['Client','Revenue','% of Total'],cW2=[80,50,cW-130];doc.setFillColor(r1,g1,b1);doc.rect(mg,y,cW,8,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');cx=mg;cCols.forEach((c,i)=>{doc.text(c,cx+2,y+5.5);cx+=cW2[i];});y+=8;const cTot=r.clients.reduce((s,c)=>s+c.revenue,0);r.clients.forEach((c,i)=>{if(i%2===0){doc.setFillColor(248,248,252);doc.rect(mg,y,cW,7,'F');}doc.setTextColor(60,60,80);doc.setFontSize(7.5);doc.setFont('helvetica','normal');cx=mg;[c.name,fmt(c.revenue),cTot>0?(c.revenue/cTot*100).toFixed(1)+'%':'0%'].forEach((t,i2)=>{doc.text(t,cx+2,y+5);cx+=cW2[i2];});y+=7;});y+=12;}if(r.insights){if(y>240){doc.addPage();y=20;}doc.setTextColor(28,28,28);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('AI business insights',mg,y);y+=8;doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(80,80,100);doc.splitTextToSize(r.insights,cW).forEach(line=>{if(y>272){doc.addPage();y=20;}doc.text(line,mg,y);y+=5;});}const pc=doc.internal.getNumberOfPages();for(let p=1;p<=pc;p++){doc.setPage(p);doc.setFillColor(r1,g1,b1);doc.rect(0,285,W,12,'F');doc.setTextColor(255,255,255);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(`${r.biz_name} · ${r.name}`,mg,292);doc.text(`Page ${p} of ${pc}`,W-mg,292,{align:'right'});}doc.save((r.biz_name||'freelance').toLowerCase().replace(/\s+/g,'-')+'.pdf');}catch(e){console.error(e);}if(btn){btn.textContent='Export PDF';btn.disabled=false;}}
 
 window.addEventListener('load',async()=>{applyTheme(themeMode,themePalette);const{data:{session}}=await sb.auth.getSession();if(session?.user)await initApp(session.user);else{document.getElementById('auth-screen').style.display='flex';document.getElementById('name-wrap').style.display='none';}document.getElementById('loading').style.display='none';});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen').style.display!=='none')handleAuth();if(e.key==='Escape'&&showApiGuide){showApiGuide=false;render();}});
