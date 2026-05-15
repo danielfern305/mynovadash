@@ -609,7 +609,7 @@ function showToast(msg,type='ok'){
 function schedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const r=getR();if(r)saveToDB(r);},1000);}
 function updR(u){const r=getR();if(!r)return;Object.assign(r,u);schedSave();render();}
 async function newReport(){const r=makeReport('Report '+(reports.length+1));reports.push(r);activeId=r.id;await saveToDB(r);activeMonth=0;render();}
-async function delReport(){const r=getR();if(!r||reports.length<=1)return;if(r.db_id)await sb.from('reports').delete().eq('id',r.db_id);reports=reports.filter(x=>x.id!==r.id);activeId=reports[0].id;render();}
+async function delReport(){const r=getR();if(!r||reports.length<=1)return;if(!confirm(`Are you sure you want to delete "${r.name}"? This cannot be undone.`))return;if(r.db_id)await sb.from('reports').delete().eq('id',r.db_id);reports=reports.filter(x=>x.id!==r.id);activeId=reports[0].id;render();}
 
 // IMPORT
 async function loadLib(src){return new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)){res();return;}const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
