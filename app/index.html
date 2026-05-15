@@ -460,7 +460,29 @@ async function initApp(u){user=u;uname=u.user_metadata?.name||u.email.split('@')
 
 // DB
 async function loadReports(){const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:(d.month_data||[]).map(m=>({...DEF,...m})),clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||'',daily_data:d.daily_data||{},profile:d.profile||{type:'',industry:'',pricing:'',description:'',experience:'',team:''}}));activeId=reports[0].id;}}
-async function saveToDB(r){const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data,profile:r.profile||{}};if(r.db_id){await sb.from('reports').update(p).eq('id',r.db_id);}else{const{data}=await sb.from('reports').insert(p).select().single();if(data){r.db_id=data.id;r.id=data.id;}}}
+async function saveToDB(r){
+  const base={name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data||{},profile:r.profile||{}};
+  if(r.db_id){
+    const{error}=await sb.from('reports').update(base).eq('id',r.db_id);
+    if(error){console.error('Save error:',error);showToast('Save failed: '+error.message,'err');}
+    else showToast('Saved','ok');
+  }else{
+    const{data,error}=await sb.from('reports').insert({user_id:user.id,...base}).select().single();
+    if(error){console.error('Insert error:',error);showToast('Save failed: '+error.message,'err');}
+    if(data){r.db_id=data.id;r.id=data.id;}
+  }
+}
+function showToast(msg,type='ok'){
+  let t=document.getElementById('nd-toast');
+  if(!t){t=document.createElement('div');t.id='nd-toast';t.style.cssText='position:fixed;bottom:20px;right:20px;padding:8px 16px;border-radius:7px;font-size:12px;font-weight:600;z-index:9999;font-family:Space Grotesk,sans-serif;transition:opacity .3s;pointer-events:none';document.body.appendChild(t);}
+  t.textContent=msg;
+  t.style.background=type==='ok'?'rgba(34,197,94,0.15)':type==='err'?'rgba(239,68,68,0.15)':'rgba(37,99,235,0.15)';
+  t.style.border='1px solid '+(type==='ok'?'rgba(34,197,94,0.3)':type==='err'?'rgba(239,68,68,0.3)':'rgba(37,99,235,0.3)');
+  t.style.color=type==='ok'?'#22C55E':type==='err'?'#EF4444':'#93C5FD';
+  t.style.opacity='1';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.style.opacity='0',2000);
+}
 function schedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const r=getR();if(r)saveToDB(r);},1000);}
 function updR(u){const r=getR();if(!r)return;Object.assign(r,u);schedSave();render();}
 async function newReport(){const r=makeReport('Report '+(reports.length+1));reports.push(r);activeId=r.id;await saveToDB(r);activeMonth=0;render();}
