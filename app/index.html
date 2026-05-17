@@ -145,9 +145,11 @@ nav{background:var(--bg-s);padding:0 1.5rem;height:56px;display:flex;align-items
 .tip-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--bg-e);border:1px solid var(--bd);color:var(--t3);font-size:9px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;margin-left:6px;vertical-align:middle;flex-shrink:0;transition:all .15s}
 .tip-btn:hover{background:var(--p1s);border-color:var(--p1b);color:var(--p1)}
 .tip-wrap{position:relative;display:inline-block}
-.tip-box{position:absolute;left:0;top:20px;z-index:500;background:rgba(20,20,24,0.97);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--t2);line-height:1.7;min-width:220px;max-width:280px;box-shadow:0 8px 28px rgba(0,0,0,0.5);font-weight:400}
+.tip-box{position:absolute;left:0;top:22px;z-index:500;background:rgba(20,20,24,0.97);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--t2);line-height:1.7;min-width:220px;max-width:280px;box-shadow:0 8px 28px rgba(0,0,0,0.5);font-weight:400;display:block;white-space:normal}
 .tour-btn-skip{font-size:12px;color:var(--t3);background:none;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;padding:0;transition:color .15s}
 .tour-btn-skip:hover{color:var(--t2)}
+.tour-highlight{outline:3px solid var(--blue)!important;outline-offset:4px;border-radius:8px;animation:tour-pulse 1.5s ease infinite}
+@keyframes tour-pulse{0%,100%{outline-color:var(--blue);box-shadow:0 0 0 0 rgba(37,99,235,0.4);}50%{outline-color:#60A5FA;box-shadow:0 0 20px rgba(37,99,235,0.25);}}
 </style>
 </head>
 <body>
@@ -504,15 +506,15 @@ const TOOLTIPS={
   'milestones':'Automatic notifications when you hit a milestone — best month ever, hitting your goal, or going on a streak. Each one only shows once so it never spams you.',
 };
 
-function tip(id){return `<span class="tip-wrap"><button class="tip-btn" onclick="event.stopPropagation();toggleTip('${id}')">?</button><div id="tt-${id}" class="tip-box" style="display:none">${TOOLTIPS[id]||''}</div></span>`;}
+function tip(id){return `<span class="tip-wrap"><button class="tip-btn" onclick="event.stopPropagation();toggleTip('${id}')">?</button><span id="tt-${id}" class="tip-box" style="display:none">${TOOLTIPS[id]||''}</span></span>`;}
 function toggleTip(id){document.querySelectorAll('.tip-box').forEach(el=>{if(el.id!=='tt-'+id)el.style.display='none';});const el=document.getElementById('tt-'+id);if(el)el.style.display=el.style.display==='none'?'block':'none';}
 
 function startTour(){tourStep=0;renderTour();}
-function endTour(){tourStep=null;localStorage.setItem('nd_tour_done','1');document.getElementById('tour-overlay')?.remove();}
+function endTour(){tourStep=null;localStorage.setItem('nd_tour_done','1');document.getElementById('tour-overlay')?.remove();document.querySelectorAll('.tour-highlight').forEach(el=>el.classList.remove('tour-highlight'));}
 function nextTourStep(){if(tourStep<TOUR_STEPS.length-1){tourStep++;renderTour();}else{endTour();}}
 function prevTourStep(){if(tourStep>0){tourStep--;renderTour();}}
 
-function renderTour(){
+function _buildTourOverlay(){
   document.getElementById('tour-overlay')?.remove();
   if(tourStep===null)return;
   const step=TOUR_STEPS[tourStep];
@@ -520,22 +522,38 @@ function renderTour(){
   overlay.id='tour-overlay';
   overlay.style.cssText='position:fixed;inset:0;z-index:9990';
   let svgHtml='',tipStyle='';
-  const pad=10;
+  const pad=12;
   if(step.target){
     const el=document.getElementById(step.target);
     if(el){
       const rc=el.getBoundingClientRect();
       const tx=rc.left-pad,ty=rc.top-pad,tw=rc.width+pad*2,th=rc.height+pad*2;
-      svgHtml=`<svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"><defs><mask id="tm"><rect width="100%" height="100%" fill="white"/><rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="8" fill="black"/></mask></defs><rect width="100%" height="100%" fill="rgba(9,9,12,0.8)" mask="url(#tm)"/></svg>`;
+      svgHtml=`<svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"><defs><mask id="tm"><rect width="100%" height="100%" fill="white"/><rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="10" fill="black"/></mask></defs><rect width="100%" height="100%" fill="rgba(9,9,12,0.82)" mask="url(#tm)"/></svg>`;
       const vw=window.innerWidth,vh=window.innerHeight;
-      const cx=Math.max(16,Math.min(tx,vw-340));
-      if(step.pos==='bottom'){const by=Math.min(ty+th+16,vh-210);tipStyle=`top:${by}px;left:${cx}px`;}
-      else{const ay=Math.max(16,ty-th-20);tipStyle=`top:${ay}px;left:${cx}px`;}
-    }else{svgHtml=`<svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"><rect width="100%" height="100%" fill="rgba(9,9,12,0.8)"/></svg>`;tipStyle='top:50%;left:50%;transform:translate(-50%,-50%)';}
-  }else{svgHtml=`<svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"><rect width="100%" height="100%" fill="rgba(9,9,12,0.8)"/></svg>`;tipStyle='top:50%;left:50%;transform:translate(-50%,-50%)';}
+      const cx=Math.max(16,Math.min(tx,vw-344));
+      if(step.pos==='bottom'){const by=Math.min(ty+th+16,vh-220);tipStyle=`top:${by}px;left:${cx}px`;}
+      else{const ay=Math.max(16,ty-220);tipStyle=`top:${ay}px;left:${cx}px`;}
+    }else{svgHtml=`<svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"><rect width="100%" height="100%" fill="rgba(9,9,12,0.82)"/></svg>`;tipStyle='top:50%;left:50%;transform:translate(-50%,-50%)';}
+  }else{svgHtml=`<svg style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"><rect width="100%" height="100%" fill="rgba(9,9,12,0.82)"/></svg>`;tipStyle='top:50%;left:50%;transform:translate(-50%,-50%)';}
   const isLast=tourStep===TOUR_STEPS.length-1;
   overlay.innerHTML=`${svgHtml}<div style="position:fixed;${tipStyle};z-index:9991;background:var(--bg-e);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:1.5rem;width:320px;box-shadow:0 24px 64px rgba(0,0,0,0.6);pointer-events:all"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><p style="font-size:15px;font-weight:700;color:var(--t1);letter-spacing:-.4px;line-height:1.3">${step.title}</p><span style="font-size:11px;color:var(--t3);white-space:nowrap;margin-left:12px;font-family:'JetBrains Mono',monospace">${tourStep+1}/${TOUR_STEPS.length}</span></div><p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:1.25rem">${step.desc}</p><div style="display:flex;align-items:center;justify-content:space-between"><button class="tour-btn-skip" onclick="endTour()">Skip tour</button><div style="display:flex;gap:8px">${tourStep>0?`<button class="btn sm" onclick="prevTourStep()">← Back</button>`:''}<button class="btn blue sm" onclick="nextTourStep()">${isLast?'Done ✓':'Next →'}</button></div></div></div>`;
   document.body.appendChild(overlay);
+}
+function renderTour(){
+  document.getElementById('tour-overlay')?.remove();
+  document.querySelectorAll('.tour-highlight').forEach(el=>el.classList.remove('tour-highlight'));
+  if(tourStep===null)return;
+  const step=TOUR_STEPS[tourStep];
+  if(step.target){
+    const el=document.getElementById(step.target);
+    if(el){
+      el.classList.add('tour-highlight');
+      el.scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(_buildTourOverlay,380);
+      return;
+    }
+  }
+  _buildTourOverlay();
 }
 
 // COMPARE INSIGHTS
