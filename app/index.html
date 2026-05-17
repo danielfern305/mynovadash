@@ -874,6 +874,15 @@ function doCharts(r,agg,compR,compAgg,sl,p1,p2,CLR){
     mkChart('cClBar',{type:'bar',data:{labels:r.clients.map(c=>c.name),datasets:[{label:'Revenue',data:r.clients.map(c=>c.revenue),backgroundColor:CLR.slice(0,r.clients.length),borderRadius:2}]},options:oF});
   }
 
+  if(tab==='tools'&&isPremium()){
+    const expTotals=calcExpBreakdown(r);
+    const expEntries=Object.entries(expTotals).sort((a,b)=>b[1]-a[1]);
+    if(expEntries.length){
+      const expColors=expEntries.map(([cat])=>{const ci=EXP_CATS.indexOf(cat);return ci>=0?EXP_COLORS[ci]:EXP_COLORS[EXP_COLORS.length-1];});
+      mkChart('cExpCat',{type:'doughnut',data:{labels:expEntries.map(([cat])=>cat),datasets:[{data:expEntries.map(([,v])=>v),backgroundColor:expColors,borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{enabled:true,callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.parsed)}`}}}}});
+    }
+  }
+
   if(tab==='goals'){
     mkChart('cGoal',{type:'bar',data:{labels:sl,datasets:[{label:'Revenue',data:r.month_data.map(m=>m.revenue),backgroundColor:p1,borderRadius:2},{label:'Goal',data:r.month_data.map(()=>r.goals.revenue),backgroundColor:p2,borderRadius:2}]},options:o});
   }
