@@ -514,7 +514,7 @@ function renderExpBreakdown(r,p1){
   const entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
   if(!entries.length)return`<div class="empty">No expense categories logged yet. Add categories when entering expenses in Overview or Calendar.</div>`;
   const grand=entries.reduce((s,[,v])=>s+v,0);
-  return`<div id="exp-chart-wrap" style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem">
+  return`<div id="exp-chart-wrap" style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem;overflow:visible">
     <div style="position:relative;width:160px;height:160px;flex-shrink:0"><canvas id="cExpCat" role="img" aria-label="Expense categories"></canvas></div>
     <div style="flex:1;min-width:200px">
       ${entries.map(([cat,amt],i)=>{
@@ -879,7 +879,7 @@ function doCharts(r,agg,compR,compAgg,sl,p1,p2,CLR){
     const expEntries=Object.entries(expTotals).sort((a,b)=>b[1]-a[1]);
     if(expEntries.length){
       const expColors=expEntries.map(([cat])=>{const ci=EXP_CATS.indexOf(cat);return ci>=0?EXP_COLORS[ci]:EXP_COLORS[EXP_COLORS.length-1];});
-      mkChart('cExpCat',{type:'doughnut',data:{labels:expEntries.map(([cat])=>cat),datasets:[{data:expEntries.map(([,v])=>v),backgroundColor:expColors,borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{enabled:true,callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.parsed)}`}}}}});
+      mkChart('cExpCat',{type:'doughnut',data:{labels:expEntries.map(([cat])=>cat),datasets:[{data:expEntries.map(([,v])=>v),backgroundColor:expColors,borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{enabled:true,position:'nearest',callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.parsed)}`}}},layout:{padding:10}}});
     }
   }
 
