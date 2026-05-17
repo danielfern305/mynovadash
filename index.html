@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#09090C;--bg-s:#0F0F14;--bg-c:#141418;--bg-e:#1A1A22;--bd:rgba(255,255,255,0.055);--bd-m:rgba(255,255,255,0.1);--t1:#EEEEF2;--t2:#72728A;--t3:#3A3A50;--blue:#2563EB;--blue-h:#1D4ED8;--blue-s:rgba(37,99,235,0.1);--blue-b:rgba(37,99,235,0.2)}
+:root{--bg:#09090C;--bg-s:#0F0F14;--bg-c:#141418;--bg-e:#1A1A22;--bd:rgba(255,255,255,0.055);--bd-m:rgba(255,255,255,0.1);--t1:#EEEEF2;--t2:#72728A;--t3:#3A3A50;--blue:#2563EB;--blue-h:#1D4ED8;--blue-s:rgba(37,99,235,0.1);--blue-b:rgba(37,99,235,0.2);--purple:#7C3AED;--purple-s:rgba(124,58,237,0.1);--purple-b:rgba(124,58,237,0.2)}
 body{font-family:'Space Grotesk',sans-serif;color:var(--t1);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
 nav{position:sticky;top:0;z-index:100;background:rgba(9,9,12,0.92);backdrop-filter:blur(12px);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
 .logo{text-decoration:none;display:flex;align-items:center;gap:10px}
@@ -25,7 +25,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(9,9,12,0.92);backdrop-filt
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .hero h1{font-size:clamp(38px,5.5vw,64px);font-weight:700;color:var(--t1);line-height:1.06;max-width:720px;margin:0 auto 1.25rem;letter-spacing:-2px}
 .hero h1 span{color:var(--blue)}
-.hero p{font-size:17px;color:var(--t2);max-width:460px;margin:0 auto 2.5rem;line-height:1.75}
+.hero p{font-size:17px;color:var(--t2);max-width:480px;margin:0 auto 2.5rem;line-height:1.75}
 .hf{display:flex;gap:8px;max-width:420px;margin:0 auto 1rem}
 .hf input{flex:1;padding:12px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--bg-s);color:var(--t1);font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;transition:border-color .2s}
 .hf input:focus{border-color:var(--blue)}
@@ -37,7 +37,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(9,9,12,0.92);backdrop-filt
 .sn{font-size:28px;font-weight:700;color:var(--t1);text-align:center;font-family:'JetBrains Mono',monospace;letter-spacing:-1px}
 .sl{font-size:11px;color:var(--t3);text-align:center;margin-top:3px;text-transform:uppercase;letter-spacing:.07em;font-weight:500}
 section{padding:80px 2rem}
-.container{max-width:960px;margin:0 auto}
+.container{max-width:980px;margin:0 auto}
 .sec-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:14px}
 .sec-title{font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--t1);margin-bottom:16px;line-height:1.1;letter-spacing:-1.5px}
 .sec-sub{font-size:16px;color:var(--t2);max-width:480px;line-height:1.75}
@@ -50,41 +50,54 @@ section{padding:80px 2rem}
 .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;margin-top:3rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
 .fc{background:var(--bg-c);padding:1.5rem;transition:background .2s}
 .fc:hover{background:var(--bg-e)}
-.ft{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:.875rem;font-family:'JetBrains Mono',monospace}
+.ft{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.875rem;font-family:'JetBrains Mono',monospace}
+.ft.blue{color:var(--blue)}
+.ft.purple{color:var(--purple)}
 .fc h3{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.3px}
 .fc p{font-size:13px;color:var(--t2);line-height:1.65}
+.tier-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-left:6px;vertical-align:middle}
+.tier-pro{background:var(--blue-s);color:#93C5FD;border:1px solid var(--blue-b)}
+.tier-premium{background:var(--purple-s);color:#C4B5FD;border:1px solid var(--purple-b)}
 .how{background:var(--bg-s)}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3rem}
 .step-n{font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.875rem;font-family:'JetBrains Mono',monospace}
 .steps h3{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.3px}
 .steps p{font-size:13px;color:var(--t2);line-height:1.65}
 /* PRICING */
-.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:2rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.plan-card{background:var(--bg-c);padding:2rem}
-.plan-card.featured{background:var(--bg-e)}
-.plan-name{font-size:13px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem}
-.plan-price{font-size:44px;font-weight:700;color:var(--t1);line-height:1;letter-spacing:-2px;font-family:'JetBrains Mono',monospace}
-.plan-price span{font-size:16px;font-weight:400;color:var(--t3);letter-spacing:0;font-family:'Space Grotesk',sans-serif}
-.plan-note{font-size:12px;color:var(--t3);margin:.5rem 0 1.25rem;font-weight:500}
-.plan-feats{list-style:none;margin-bottom:1.75rem;border-top:1px solid var(--bd);padding-top:1.25rem}
-.plan-feats li{font-size:13px;color:var(--t2);padding:6px 0;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--bd)}
+.plans-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:2rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.plan-card{background:var(--bg-c);padding:1.75rem}
+.plan-card.mid{background:var(--bg-e)}
+.plan-card.top{background:linear-gradient(160deg,rgba(124,58,237,0.08),var(--bg-e));border:none;position:relative}
+.plan-name{font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem}
+.plan-price{font-size:40px;font-weight:700;color:var(--t1);line-height:1;letter-spacing:-2px;font-family:'JetBrains Mono',monospace}
+.plan-price span{font-size:15px;font-weight:400;color:var(--t3);letter-spacing:0;font-family:'Space Grotesk',sans-serif}
+.plan-note{font-size:11px;color:var(--t3);margin:.4rem 0 1rem;font-weight:500}
+.plan-feats{list-style:none;margin-bottom:1.5rem;border-top:1px solid var(--bd);padding-top:1rem}
+.plan-feats li{font-size:12px;color:var(--t2);padding:5px 0;display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid var(--bd)}
 .plan-feats li:last-child{border-bottom:none}
-.ck{font-size:10px;color:var(--blue);font-weight:700;flex-shrink:0;margin-top:3px;font-family:'JetBrains Mono',monospace}
-.xk{font-size:10px;color:var(--t3);font-weight:700;flex-shrink:0;margin-top:3px}
-.plan-btn{width:100%;text-align:center;padding:11px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:block;transition:all .2s;border:1px solid var(--bd);color:var(--t2);background:transparent;font-family:'Space Grotesk',sans-serif}
+.ck{font-size:9px;color:var(--blue);font-weight:700;flex-shrink:0;margin-top:3px;font-family:'JetBrains Mono',monospace}
+.ckp{font-size:9px;color:var(--purple);font-weight:700;flex-shrink:0;margin-top:3px;font-family:'JetBrains Mono',monospace}
+.xk{font-size:9px;color:var(--t3);font-weight:700;flex-shrink:0;margin-top:3px}
+.plan-btn{width:100%;text-align:center;padding:10px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:block;transition:all .2s;border:1px solid var(--bd);color:var(--t2);background:transparent;font-family:'Space Grotesk',sans-serif}
 .plan-btn:hover{background:var(--bg-s);color:var(--t1)}
-.plan-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.plan-btn.primary:hover{background:var(--blue-h)}
-.annual-section{background:var(--bg-s);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:60px 2rem}
-.annual-card{background:var(--bg-c);border:1px solid var(--blue-b);border-radius:12px;padding:2.5rem;max-width:700px;margin:2rem auto 0;position:relative;overflow:hidden}
-.annual-card::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(37,99,235,0.06) 0%,transparent 70%);pointer-events:none}
-.annual-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:var(--blue-s);border:1px solid var(--blue-b);border-radius:100px;font-size:11px;color:#93C5FD;font-weight:600;margin-bottom:1.5rem}
-.annual-price-main{font-size:52px;font-weight:700;color:var(--t1);line-height:1;letter-spacing:-2px;font-family:'JetBrains Mono',monospace}
-.annual-price-main span{font-size:18px;font-weight:400;color:var(--t3);letter-spacing:0;font-family:'Space Grotesk',sans-serif}
-.annual-feats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:1.5rem 0 2rem}
-.annual-feat{font-size:13px;color:var(--t2);display:flex;align-items:center;gap:8px}
-.annual-btn{display:block;text-align:center;padding:13px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'Space Grotesk',sans-serif;transition:background .2s;max-width:300px}
-.annual-btn:hover{background:var(--blue-h)}
+.plan-btn.pro{background:var(--blue);color:#fff;border-color:var(--blue)}
+.plan-btn.pro:hover{background:var(--blue-h)}
+.plan-btn.premium{background:var(--purple);color:#fff;border-color:var(--purple)}
+.plan-btn.premium:hover{background:#6D28D9}
+.best-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);padding:3px 12px;background:var(--purple);border-radius:0 0 8px 8px;font-size:10px;font-weight:700;color:#fff;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+/* ANNUAL */
+.annual-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+.annual-card{background:var(--bg-c);border:1px solid var(--bd);border-radius:10px;padding:1.5rem;position:relative}
+.annual-card.premium-annual{border-color:var(--purple-b);background:linear-gradient(135deg,rgba(124,58,237,0.06),var(--bg-c))}
+.annual-price{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-1.5px;line-height:1}
+.annual-price span{font-size:14px;font-weight:400;font-family:'Space Grotesk',sans-serif;color:var(--t3)}
+.annual-save{font-size:12px;color:#22C55E;font-weight:600;margin-top:4px}
+.annual-btn{display:block;text-align:center;padding:10px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;margin-top:1.25rem;font-family:'Space Grotesk',sans-serif;transition:background .2s}
+.annual-btn.pro{background:var(--blue);color:#fff}
+.annual-btn.pro:hover{background:var(--blue-h)}
+.annual-btn.premium{background:var(--purple);color:#fff}
+.annual-btn.premium:hover{background:#6D28D9}
+/* PRIVACY */
 .privacy-sec{background:var(--bg-c);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:60px 2rem}
 .privacy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:2.5rem;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
 .privacy-item{background:var(--bg-s);padding:1.5rem}
@@ -102,7 +115,7 @@ footer p{font-size:12px;color:var(--t3)}
 .fl{display:flex;gap:1.5rem;list-style:none}
 .fl a{font-size:12px;color:var(--t3);text-decoration:none}
 .fl a:hover{color:var(--t2)}
-@media(max-width:700px){.nav-links li:not(:last-child){display:none}.hf,.cf{flex-direction:column}.stats{gap:2rem}.plans-grid{grid-template-columns:1fr}.annual-feats{grid-template-columns:1fr}}
+@media(max-width:800px){.nav-links li:not(:last-child){display:none}.hf,.cf{flex-direction:column}.stats{gap:2rem}.plans-wrap{grid-template-columns:1fr}.annual-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -116,25 +129,25 @@ footer p{font-size:12px;color:var(--t3)}
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#privacy-sec">Privacy</a></li>
     <li><a href="/signin">Sign in</a></li>
-    <li><a href="#waitlist" class="nav-cta">Get started</a></li>
+    <li><a href="#waitlist" class="nav-cta">Get started free</a></li>
   </ul>
 </nav>
 
 <section class="hero" id="top">
-  <div class="badge"><span class="badge-dot"></span>Now accepting signups</div>
+  <div class="badge"><span class="badge-dot"></span>Now accepting signups — free forever</div>
   <h1>Your freelance business,<br><span>built to grow</span></h1>
-  <p>Real-time analytics, AI-powered insights, invoice tracking, and daily cash flow planning — everything a freelancer needs to understand and scale their business.</p>
+  <p>Real-time analytics, AI-powered insights, invoice tracking, expense breakdown, and daily cash flow planning — built for every type of freelancer and independent business.</p>
   <form action="https://mynovadash.us9.list-manage.com/subscribe/post?u=3290eae4aca25d0b89501da30&amp;id=099e4e0a4a&amp;f_id=00caf3e3f0" method="POST" target="_blank" class="hf">
     <input type="email" name="EMAIL" placeholder="Enter your email address" required>
-    <button type="submit">Get early access</button>
+    <button type="submit">Get started free</button>
   </form>
-  <p class="hero-note">First month free on Basic &middot; No credit card required</p>
+  <p class="hero-note">Free forever · Pro and Premium plans include a free first month</p>
 </section>
 
 <div class="stats">
   <div><div class="sn">AI</div><div class="sl">Powered insights</div></div>
   <div><div class="sn">12mo</div><div class="sl">Data range</div></div>
-  <div><div class="sn">PDF</div><div class="sl">Shareable reports</div></div>
+  <div><div class="sn">3</div><div class="sl">Plan tiers</div></div>
   <div><div class="sn">100%</div><div class="sl">Data privacy</div></div>
   <div><div class="sn">Any</div><div class="sl">Business type</div></div>
 </div>
@@ -143,7 +156,7 @@ footer p{font-size:12px;color:var(--t3)}
   <div class="container">
     <p class="sec-label">The problem</p>
     <h2 class="sec-title">Freelancing without data<br>is flying blind</h2>
-    <p class="sec-sub">Most freelancers track income in a spreadsheet — if at all. No clarity on growth, no visibility into cash flow, no way to plan ahead.</p>
+    <p class="sec-sub">Most freelancers track income in a spreadsheet — if at all. No clarity on growth, no visibility into cash flow, no plan for tax season.</p>
     <div class="pg">
       <div class="pc"><div class="pn">01</div><h3>No visibility into growth</h3><p>You're making money but can't tell if you're actually growing month over month or just staying flat.</p></div>
       <div class="pc"><div class="pn">02</div><h3>Undercharging without knowing it</h3><p>Without knowing your effective hourly rate, you're leaving thousands on the table every single month.</p></div>
@@ -154,22 +167,22 @@ footer p{font-size:12px;color:var(--t3)}
 
 <section id="features">
   <div class="container">
-    <p class="sec-label">The solution</p>
-    <h2 class="sec-title">Everything your business<br>needs in one dashboard</h2>
-    <p class="sec-sub">myNovaDash turns your raw freelance data into clear, actionable intelligence — tailored to your specific type of business.</p>
+    <p class="sec-label">What's included</p>
+    <h2 class="sec-title">Everything from day tracking<br>to full financial intelligence</h2>
+    <p class="sec-sub">Start free. Unlock more as your business grows. Every feature built specifically for independent businesses.</p>
     <div class="fg">
-      <div class="fc"><div class="ft">Analytics</div><h3>Real-time KPI dashboard</h3><p>Track revenue, expenses, profit margin, effective hourly rate, and more across any custom date range. See your monthly trends at a glance.</p></div>
-      <div class="fc"><div class="ft">AI</div><h3>Business insights tailored to you</h3><p>Set up your business profile — type, industry, pricing model — and Claude generates six specific, data-driven insights tailored to your exact business. A plumber gets different advice than a designer.</p></div>
-      <div class="fc"><div class="ft">AI</div><h3>Trend prediction</h3><p>Linear regression across your historical data projects what next month's revenue is likely to be. Know whether you're trending up or down before it happens.</p></div>
-      <div class="fc"><div class="ft">Invoices</div><h3>Invoice tracker with calendar sync</h3><p>Create invoices, track payment status, and flag overdue amounts. Unpaid invoices automatically appear as projected revenue on their due date. Mark as paid and the calendar updates instantly.</p></div>
-      <div class="fc"><div class="ft">Calendar</div><h3>Day-by-day cash flow</h3><p>Log revenue and expenses by individual day. See actual vs projected entries clearly. Invoice projections appear automatically on their due dates so your calendar always reflects what's coming in.</p></div>
-      <div class="fc"><div class="ft">Tax</div><h3>Tax estimator</h3><p>Know exactly what you owe each quarter based on your state, filing status, and net profit — before the deadline hits. Shows federal, state, and self-employment tax breakdowns.</p></div>
-      <div class="fc"><div class="ft">Goals</div><h3>Goal tracking</h3><p>Set monthly revenue targets and see exactly which months you hit them, with progress bars for every period and streak tracking.</p></div>
-      <div class="fc"><div class="ft">Import</div><h3>Import external data</h3><p>Upload any Excel, CSV, PDF, or Word file. Claude reads it, extracts your data, and populates your dashboard automatically. No manual entry required.</p></div>
-      <div class="fc"><div class="ft">Clients</div><h3>Client breakdown</h3><p>Track revenue by individual client with pie charts, bar charts, and percentage breakdowns. Instantly see who your most valuable clients are.</p></div>
-      <div class="fc"><div class="ft">Finance</div><h3>Break-even calculator</h3><p>Enter your fixed expenses and variable costs. Instantly know the exact revenue you need to break even each month — and your daily target to get there.</p></div>
-      <div class="fc"><div class="ft">Milestones</div><h3>Achievement notifications</h3><p>Get notified when you hit your best month ever, reach your monthly goal, or build a consecutive streak. Small moments that make the grind feel real.</p></div>
-      <div class="fc"><div class="ft">Export</div><h3>PDF reports</h3><p>Generate a polished, branded PDF with all your KPIs, monthly breakdown, client data, and AI insights — ready to share with an accountant or keep for records.</p></div>
+      <div class="fc"><div class="ft blue">Core</div><h3>Real-time KPI dashboard</h3><p>Revenue, expenses, profit margin, effective hourly rate, average monthly — all calculated automatically across any date range.</p></div>
+      <div class="fc"><div class="ft blue">Core</div><h3>Goal tracking</h3><p>Set monthly revenue targets and see which months you hit them, with progress bars, streak tracking, and milestone celebrations.</p></div>
+      <div class="fc"><div class="ft blue">Core</div><h3>PDF export</h3><p>Generate a polished, branded PDF with all your KPIs, monthly data, and notes — ready to share with an accountant or keep for records.</p></div>
+      <div class="fc"><div class="ft blue">Pro</div><h3>AI business insights <span class="tier-badge tier-pro">Pro</span></h3><p>Six specific, data-driven insights generated by Claude from your actual numbers. Updated every time you generate — real analysis, not generic advice.</p></div>
+      <div class="fc"><div class="ft blue">Pro</div><h3>Invoice tracker <span class="tier-badge tier-pro">Pro</span></h3><p>Create invoices, track payment status, flag overdue amounts. Unpaid invoices automatically appear as projected revenue on the calendar on their due date.</p></div>
+      <div class="fc"><div class="ft blue">Pro</div><h3>Day-by-day calendar <span class="tier-badge tier-pro">Pro</span></h3><p>Log revenue and expenses by individual day. See actual vs projected entries. Invoice projections sync automatically so your calendar reflects incoming cash flow.</p></div>
+      <div class="fc"><div class="ft blue">Pro</div><h3>AI trend prediction <span class="tier-badge tier-pro">Pro</span></h3><p>Linear regression across your historical data projects next month's likely revenue. Know whether you're trending up or down before it happens.</p></div>
+      <div class="fc"><div class="ft purple">Premium</div><h3>Expense categories <span class="tier-badge tier-premium">Premium</span></h3><p>Tag expenses by category — software, equipment, travel, subcontractors, and more. See a donut chart and breakdown of exactly where your money goes.</p></div>
+      <div class="fc"><div class="ft purple">Premium</div><h3>Tax estimator <span class="tier-badge tier-premium">Premium</span></h3><p>Quarterly tax estimate based on your state, filing status, and net profit. Shows federal, state, and self-employment tax with a monthly set-aside amount.</p></div>
+      <div class="fc"><div class="ft purple">Premium</div><h3>Business profile + tailored AI <span class="tier-badge tier-premium">Premium</span></h3><p>Tell the AI what type of business you run and it tailors every insight to your industry, pricing model, and client type. A plumber gets different advice than a designer.</p></div>
+      <div class="fc"><div class="ft purple">Premium</div><h3>Break-even calculator <span class="tier-badge tier-premium">Premium</span></h3><p>Enter your fixed and variable costs and instantly know the exact revenue you need to break even each month — and your daily target to get there.</p></div>
+      <div class="fc"><div class="ft purple">Premium</div><h3>Import external data <span class="tier-badge tier-premium">Premium</span></h3><p>Upload any Excel, CSV, PDF, or Word file. Claude reads it, extracts your financial data, and populates your dashboard. No manual entry required.</p></div>
     </div>
   </div>
 </section>
@@ -178,11 +191,10 @@ footer p{font-size:12px;color:var(--t3)}
   <div class="container">
     <p class="sec-label">How it works</p>
     <h2 class="sec-title">Up and running<br>in three steps</h2>
-    <p class="sec-sub">No complicated setup. No accountant required. Just your numbers and a few minutes.</p>
     <div class="steps">
-      <div><div class="step-n">Step 01</div><h3>Set up your profile</h3><p>Tell us what type of business you run — freelance designer, independent plumber, marketing consultant, or anything else. This lets the AI tailor every insight to your specific industry.</p></div>
-      <div><div class="step-n">Step 02</div><h3>Enter or import your data</h3><p>Add your monthly totals manually, log day by day on the calendar, or upload an existing spreadsheet and let Claude extract your data automatically.</p></div>
-      <div><div class="step-n">Step 03</div><h3>Get insights and plan ahead</h3><p>Generate AI insights specific to your business, track invoices against your calendar, estimate your tax bill, and see exactly where your business is heading.</p></div>
+      <div><div class="step-n">Step 01</div><h3>Create your free account</h3><p>Sign up in seconds. No credit card required. Start tracking your revenue, expenses, and goals immediately on the free plan.</p></div>
+      <div><div class="step-n">Step 02</div><h3>Enter or import your data</h3><p>Add monthly totals manually, log day by day on the calendar, or upload an existing spreadsheet and let Claude extract your data automatically.</p></div>
+      <div><div class="step-n">Step 03</div><h3>Grow with the platform</h3><p>As your business grows, unlock Pro for AI insights and invoicing, then Premium for full financial intelligence — tax planning, expense tracking, and tailored AI.</p></div>
     </div>
   </div>
 </section>
@@ -191,105 +203,130 @@ footer p{font-size:12px;color:var(--t3)}
 <section id="pricing">
   <div class="container">
     <p class="sec-label">Pricing</p>
-    <h2 class="sec-title">Simple, transparent pricing</h2>
-    <p class="sec-sub">Start with a free first month. Upgrade when you're ready. No hidden fees, no contracts.</p>
-    <div class="plans-grid">
+    <h2 class="sec-title">Start free. Scale when ready.</h2>
+    <p class="sec-sub">Three tiers designed to grow with your business. Pro and Premium include a free first month — no credit card required to start.</p>
+
+    <div class="plans-wrap">
+      <!-- FREE -->
       <div class="plan-card">
-        <p class="plan-name">Basic</p>
-        <div class="plan-price">$20<span>/mo</span></div>
-        <p class="plan-note">First month free — no credit card required</p>
+        <p class="plan-name">Free</p>
+        <div class="plan-price">$0<span>/forever</span></div>
+        <p class="plan-note">No credit card · No expiry</p>
         <ul class="plan-feats">
-          <li><span class="ck">✓</span>Up to 3 reports</li>
-          <li><span class="ck">✓</span>6 months of data</li>
+          <li><span class="ck">✓</span>1 report</li>
+          <li><span class="ck">✓</span>3 months of data</li>
           <li><span class="ck">✓</span>Core KPI dashboard + charts</li>
           <li><span class="ck">✓</span>Goal tracking + progress bars</li>
-          <li><span class="ck">✓</span>Period comparison</li>
           <li><span class="ck">✓</span>PDF export</li>
-          <li><span class="ck">✓</span>Notes per month</li>
           <li><span class="ck">✓</span>Income stability tracking</li>
           <li><span class="ck">✓</span>Milestone notifications</li>
+          <li><span class="ck">✓</span>Notes per month</li>
           <li><span class="xk">✗</span><span style="color:var(--t3)">AI insights</span></li>
           <li><span class="xk">✗</span><span style="color:var(--t3)">Invoice tracker</span></li>
           <li><span class="xk">✗</span><span style="color:var(--t3)">Daily calendar</span></li>
-          <li><span class="xk">✗</span><span style="color:var(--t3)">Client breakdown</span></li>
-          <li><span class="xk">✗</span><span style="color:var(--t3)">Import external data</span></li>
-          <li><span class="xk">✗</span><span style="color:var(--t3)">Tax estimator</span></li>
         </ul>
-        <a href="/app" class="plan-btn">Start free month →</a>
+        <a href="/app" class="plan-btn">Get started free</a>
       </div>
-      <div class="plan-card featured">
-        <p class="plan-name">Pro — Monthly</p>
-        <div class="plan-price">$40<span>/mo</span></div>
-        <p class="plan-note">Billed monthly &middot; Cancel anytime</p>
+      <!-- PRO -->
+      <div class="plan-card mid">
+        <p class="plan-name">Pro</p>
+        <div class="plan-price">$19<span>/mo</span></div>
+        <p class="plan-note">First month free · Cancel anytime</p>
         <ul class="plan-feats">
-          <li><span class="ck">✓</span>Unlimited reports</li>
-          <li><span class="ck">✓</span>12 months of data</li>
-          <li><span class="ck">✓</span>Everything in Basic</li>
-          <li><span class="ck">✓</span>AI business insights — tailored to your industry</li>
+          <li><span class="ck">✓</span>3 reports</li>
+          <li><span class="ck">✓</span>6 months of data</li>
+          <li><span class="ck">✓</span>Everything in Free</li>
+          <li><span class="ck">✓</span>AI business insights</li>
           <li><span class="ck">✓</span>AI trend prediction</li>
-          <li><span class="ck">✓</span>Invoice tracker with calendar sync</li>
-          <li><span class="ck">✓</span>Day-by-day calendar with projections</li>
-          <li><span class="ck">✓</span>Client breakdown (unlimited clients)</li>
-          <li><span class="ck">✓</span>Import external data (Excel, CSV, PDF, Word)</li>
-          <li><span class="ck">✓</span>Tax estimator — all 50 states</li>
-          <li><span class="ck">✓</span>Break-even calculator</li>
-          <li><span class="ck">✓</span>Business profile + tailored AI</li>
+          <li><span class="ck">✓</span>Day-by-day calendar</li>
+          <li><span class="ck">✓</span>Invoice tracker + calendar sync</li>
+          <li><span class="ck">✓</span>Client breakdown (up to 5)</li>
+          <li><span class="ck">✓</span>Period comparison</li>
           <li><span class="ck">✓</span>Share codes</li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Expense categories</span></li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Tax estimator</span></li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Business profile + tailored AI</span></li>
+          <li><span class="xk">✗</span><span style="color:var(--t3)">Import external data</span></li>
         </ul>
-        <a href="/app" class="plan-btn primary">Get started →</a>
+        <a href="/app" class="plan-btn pro">Start free month →</a>
+      </div>
+      <!-- PREMIUM -->
+      <div class="plan-card top">
+        <div class="best-badge">Most powerful</div>
+        <p class="plan-name" style="margin-top:1rem">Premium</p>
+        <div class="plan-price">$39<span>/mo</span></div>
+        <p class="plan-note">First month free · Cancel anytime</p>
+        <ul class="plan-feats">
+          <li><span class="ckp">✓</span>Unlimited reports</li>
+          <li><span class="ckp">✓</span>12 months of data</li>
+          <li><span class="ckp">✓</span>Everything in Pro</li>
+          <li><span class="ckp">✓</span>Expense categories + breakdown</li>
+          <li><span class="ckp">✓</span>Tax estimator — all 50 states</li>
+          <li><span class="ckp">✓</span>Break-even calculator</li>
+          <li><span class="ckp">✓</span>Business profile + tailored AI</li>
+          <li><span class="ckp">✓</span>Import external data</li>
+          <li><span class="ckp">✓</span>Unlimited clients</li>
+          <li><span class="ckp">✓</span>Client health scoring</li>
+          <li><span class="ckp">✓</span>Profit forecasting</li>
+          <li><span class="ckp">✓</span>Priority support</li>
+        </ul>
+        <a href="/app" class="plan-btn premium">Start free month →</a>
       </div>
     </div>
   </div>
 </section>
 
-<div class="annual-section" id="annual">
+<!-- ANNUAL -->
+<div style="background:var(--bg-s);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:60px 2rem" id="annual">
   <div class="container">
-    <p class="sec-label">Pro Annual — Best value</p>
+    <p class="sec-label">Annual plans — save more</p>
     <h2 class="sec-title">Commit annually,<br>pay less every month</h2>
-    <div class="annual-card">
-      <span class="annual-badge">⚡ Most popular</span>
-      <div class="annual-price-main">$30<span>/month</span></div>
-      <p style="font-size:14px;color:var(--t2);margin:.5rem 0 .25rem">$360 billed upfront</p>
-      <p style="font-size:13px;color:#22C55E;font-weight:600;margin-bottom:0">Saves you $10/month — $120/year — vs monthly Pro</p>
-      <div class="annual-feats">
-        <div class="annual-feat"><span class="ck">✓</span>Everything in Pro</div>
-        <div class="annual-feat"><span class="ck">✓</span>Unlimited reports</div>
-        <div class="annual-feat"><span class="ck">✓</span>AI insights + prediction</div>
-        <div class="annual-feat"><span class="ck">✓</span>Invoice tracker + calendar</div>
-        <div class="annual-feat"><span class="ck">✓</span>Tax estimator all 50 states</div>
-        <div class="annual-feat"><span class="ck">✓</span>Import external data</div>
-        <div class="annual-feat"><span class="ck">✓</span>12 months data range</div>
-        <div class="annual-feat"><span class="ck">✓</span>Business profile + tailored AI</div>
+    <div class="annual-grid">
+      <div class="annual-card">
+        <p style="font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem">Pro Annual</p>
+        <div class="annual-price">$15<span>/month</span></div>
+        <p style="font-size:13px;color:var(--t2);margin:.4rem 0 .2rem">$180 billed annually</p>
+        <p class="annual-save">Saves $48/year vs monthly Pro</p>
+        <p style="font-size:13px;color:var(--t2);margin-top:.75rem;line-height:1.65">All Pro features — AI insights, invoice tracker, daily calendar, client breakdown, period comparison, share codes.</p>
+        <a href="/app" class="annual-btn pro">Get Pro Annual →</a>
       </div>
-      <a href="/app" class="annual-btn">Get Pro Annual →</a>
+      <div class="annual-card premium-annual">
+        <p style="font-size:12px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem">Premium Annual</p>
+        <div class="annual-price" style="color:var(--t1)">$32<span>/month</span></div>
+        <p style="font-size:13px;color:var(--t2);margin:.4rem 0 .2rem">$384 billed annually</p>
+        <p class="annual-save">Saves $84/year vs monthly Premium</p>
+        <p style="font-size:13px;color:var(--t2);margin-top:.75rem;line-height:1.65">Full platform — expense categories, tax estimator, tailored AI, import data, unlimited everything, priority support.</p>
+        <a href="/app" class="annual-btn premium">Get Premium Annual →</a>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- PRIVACY -->
 <div class="privacy-sec" id="privacy-sec">
   <div class="container">
     <p class="sec-label">Privacy first</p>
     <h2 class="sec-title">Your data stays yours.<br>Always.</h2>
-    <p class="sec-sub">We built myNovaDash with privacy at the core. No selling data, no sharing, no exceptions.</p>
+    <p class="sec-sub">Built with privacy at the core. No selling data, no sharing, no exceptions.</p>
     <div class="privacy-grid">
       <div class="privacy-item">
         <div style="font-size:20px;margin-bottom:.75rem">🔒</div>
         <h3>Your API key never leaves your device</h3>
-        <p>When you use AI features, your Anthropic API key is stored exclusively in your browser. We never see it, never store it on our servers. Every AI request goes directly from your browser to Anthropic.</p>
+        <p>AI features use your own Anthropic API key stored only in your browser. We never see it, never store it on our servers. Every AI request goes directly from your browser to Anthropic.</p>
       </div>
       <div class="privacy-item">
         <div style="font-size:20px;margin-bottom:.75rem">🚫</div>
         <h3>We never sell your data</h3>
-        <p>Your financial data is yours. We don't sell it, share it with advertisers, or use it for any purpose other than providing you the service. No data brokers. No exceptions.</p>
+        <p>Your financial data is yours. We don't sell it, share it with advertisers, or use it for any purpose other than providing the service. No exceptions.</p>
       </div>
       <div class="privacy-item">
         <div style="font-size:20px;margin-bottom:.75rem">🤖</div>
         <h3>Not used to train AI</h3>
-        <p>Your business data is never used to train AI models. What you put in stays private — built into how the product works technically, not just as a policy promise.</p>
+        <p>Your business data is never used to train AI models. Built into how the product works technically — not just a policy promise.</p>
       </div>
       <div class="privacy-item">
         <div style="font-size:20px;margin-bottom:.75rem">🏦</div>
-        <h3>Bank-grade data security</h3>
+        <h3>Bank-grade security</h3>
         <p>All data encrypted in transit and at rest. Row-level database security means your data is only ever accessible by your account — not even us.</p>
       </div>
     </div>
@@ -298,11 +335,11 @@ footer p{font-size:12px;color:var(--t3)}
 
 <section class="cta-sec" id="waitlist">
   <div class="container">
-    <h2 class="sec-title">Ready to know your numbers?</h2>
-    <p class="sec-sub" style="margin:0 auto 2.5rem">Join the waitlist. Early access members get their first month of Pro free at launch.</p>
+    <h2 class="sec-title">Start tracking your business today</h2>
+    <p class="sec-sub" style="margin:0 auto 2.5rem">Free forever. No credit card. Upgrade when you're ready.</p>
     <form action="https://mynovadash.us9.list-manage.com/subscribe/post?u=3290eae4aca25d0b89501da30&amp;id=099e4e0a4a&amp;f_id=00caf3e3f0" method="POST" target="_blank" class="cf">
       <input type="email" name="EMAIL" placeholder="Your email address" required>
-      <button type="submit">Join waitlist</button>
+      <button type="submit">Get started free</button>
     </form>
   </div>
 </section>
