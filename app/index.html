@@ -248,7 +248,7 @@ let showInvoiceForm=false,payingInvoiceId=null,payingDate=new Date().toISOString
 const getR=()=>reports.find(r=>r.id===activeId)||reports[0]||null;
 const getLabels=(sm,sy,n)=>Array.from({length:n},(_,i)=>{const t=sm+i;return{label:`${MN[t%12]} ${sy+Math.floor(t/12)}`,short:MN[t%12]};});
 const calcAgg=r=>{const md=r.month_data,tR=md.reduce((s,m)=>s+m.revenue,0),tE=md.reduce((s,m)=>s+m.expenses,0),tH=md.reduce((s,m)=>s+m.hours,0),tP=md.reduce((s,m)=>s+m.projects,0),nP=tR-tE;return{totRev:tR,totExp:tE,totHrs:tH,totProj:tP,netP:nP,pMgn:tR>0?nP/tR*100:0,effR:tH>0?tR/tH:0,avgR:tR/md.length};};
-function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:'',daily_data:{},profile:{type:'',industry:'',pricing:'',description:'',experience:'',team:''},invoices:[]};}
+function makeReport(name='New Report'){return{id:uid(),db_id:null,name,biz_name:'My Freelance Business',start_month:0,start_year:2025,duration:6,month_data:Array.from({length:6},(_,i)=>({...DEF,revenue:[4200,3800,5100,4700,6200,5800][i]})),clients:[],goals:{revenue:6000,profit:4000},insights:'',daily_data:{},profile:{type:'',industry:'',pricing:'',description:'',experience:'',team:''},invoices:[],expense_categories:{}};}
 
 // TAX
 function calcFederalTax(income,status){const ded=status==='married'?29200:14600,taxable=Math.max(0,income-ded),brackets=status==='married'?[[23200,.10],[94300,.12],[201050,.22],[383900,.24],[487450,.32],[731200,.35],[Infinity,.37]]:[[11600,.10],[47150,.12],[100525,.22],[191950,.24],[243725,.32],[609350,.35],[Infinity,.37]];let tax=0,prev=0;for(const[limit,rate]of brackets){if(taxable<=prev)break;tax+=(Math.min(taxable,limit)-prev)*rate;prev=limit;}return tax;}
@@ -431,6 +431,7 @@ function renderCalendarTab(r,p1,p2){
         <div><label class="al">Hours</label><input type="number" class="nim" value="${dt.hours||0}" id="day-hrs" min="0" step="0.5" placeholder="0"></div>
       </div>
       <div style="margin-bottom:14px"><label class="al">Note</label><input type="text" class="di" value="${dt.note||''}" id="day-note" placeholder="e.g. Invoice from Acme, expected payment, Adobe renewal..."></div>
+      ${isPremium()?`<div style="margin-bottom:14px"><label class="al">Expense breakdown by category</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">${(()=>{const k2='expcat:'+dayKey(calYear,calMonth,calSelectedDay);const saved2=r.daily_data?.[k2]||r.expense_categories?.['expcat:'+dayKey(calYear,calMonth,calSelectedDay)]||{};return EXP_CATS.map((cat,ci)=>`<div style="display:flex;align-items:center;gap:5px"><div style="width:7px;height:7px;border-radius:1px;background:${EXP_COLORS[ci]};flex-shrink:0"></div><span style="font-size:10px;color:var(--t3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${cat}</span><input type="number" min="0" placeholder="0" value="${saved2[cat]||''}" style="width:65px;padding:3px 5px;border:1px solid var(--bd);border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--t1);background:var(--bg-s)" id="daycat-${ci}" onchange="updDayExpCat(${calYear},${calMonth},${calSelectedDay},'${cat}',Number(this.value)||0)"></div>`).join('');})()}</div></div>`:''}
       <div style="display:flex;gap:8px">
         <button class="btn blue" onclick="saveDayEntry(${calYear},${calMonth},${calSelectedDay})">Save →</button>
         ${(dt.revenue>0||dt.expenses>0||dt.note)?`<button class="btn" onclick="clearDayEntry(${calYear},${calMonth},${calSelectedDay})" style="color:var(--err);border-color:rgba(239,68,68,.2)">Clear day</button>`:''}
@@ -461,6 +462,75 @@ function renderCalendarTab(r,p1,p2){
   return h;
 }
 
+
+
+// EXPENSE CATEGORIES
+const EXP_CATS=['Software & Subscriptions','Equipment & Hardware','Travel & Transportation','Marketing & Advertising','Subcontractors & Freelancers','Office & Supplies','Education & Training','Professional Services','Phone & Internet','Meals & Entertainment','Other'];
+const EXP_COLORS=['#3B82F6','#8B5CF6','#F59E0B','#EC4899','#10B981','#6366F1','#F97316','#14B8A6','#EF4444','#A78BFA','#72728A'];
+
+function getExpCatKey(year,month){return `${year}-${String(month+1).padStart(2,'0')}`;}
+function getDayExpCatKey(y,m,d){return dayKey(y,m,d);}
+
+function updMonthExpCat(monthIdx,cat,amount){
+  const r=getR();if(!r)return;
+  const labels=getLabels(r.start_month,r.start_year,r.duration);
+  const lbl=labels[monthIdx];
+  if(!lbl)return;
+  const parts=lbl.label.split(' ');
+  const mo=MN.findIndex(m=>m===parts[0]),yr=parseInt(parts[1]);
+  const k=getExpCatKey(yr,mo);
+  const ec={...(r.expense_categories||{})};
+  if(!ec[k])ec[k]={};
+  if(amount>0)ec[k][cat]=amount;
+  else delete ec[k][cat];
+  r.expense_categories=ec;
+  schedSave();
+}
+
+function updDayExpCat(y,m,d,cat,amount){
+  const r=getR();if(!r)return;
+  const k='expcat:'+dayKey(y,m,d);
+  const ec={...(r.expense_categories||{})};
+  if(!ec[k])ec[k]={};
+  if(amount>0)ec[k][cat]=amount;
+  else delete ec[k][cat];
+  r.expense_categories=ec;
+  schedSave();
+}
+
+function calcExpBreakdown(r){
+  const ec=r.expense_categories||{};
+  const totals={};
+  Object.values(ec).forEach(dayOrMonth=>{
+    Object.entries(dayOrMonth).forEach(([cat,amt])=>{
+      totals[cat]=(totals[cat]||0)+amt;
+    });
+  });
+  return totals;
+}
+
+function renderExpBreakdown(r,p1){
+  const totals=calcExpBreakdown(r);
+  const entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length)return`<div class="empty">No expense categories logged yet. Add categories when entering expenses in Overview or Calendar.</div>`;
+  const grand=entries.reduce((s,[,v])=>s+v,0);
+  return`<div id="exp-chart-wrap" style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem">
+    <div style="position:relative;width:160px;height:160px;flex-shrink:0"><canvas id="cExpCat" role="img" aria-label="Expense categories"></canvas></div>
+    <div style="flex:1;min-width:200px">
+      ${entries.map(([cat,amt],i)=>{
+        const ci=EXP_CATS.indexOf(cat);
+        const color=ci>=0?EXP_COLORS[ci]:EXP_COLORS[EXP_COLORS.length-1];
+        const pct=grand>0?Math.round(amt/grand*100):0;
+        return`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:10px;height:10px;border-radius:2px;background:${color};flex-shrink:0"></div>
+          <div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--t1)">${fmt(amt)}</span></div><div style="height:3px;background:var(--bg-e);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:2px"></div></div></div>
+          <span style="font-size:11px;color:var(--t3);min-width:28px;text-align:right">${pct}%</span>
+        </div>`;
+      }).join('')}
+      <div style="border-top:1px solid var(--bd);padding-top:10px;display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2);font-weight:500">Total categorized</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--t1)">${fmt(grand)}</span></div>
+    </div>
+  </div>`;
+}
 
 // INVOICES
 function getInvoiceStatus(inv){if(inv.status==='paid')return'paid';const t=new Date();t.setHours(0,0,0,0);const d=new Date(inv.due_date+'T00:00:00');return d<t?'overdue':'unpaid';}
@@ -578,13 +648,14 @@ async function initApp(u){user=u;uname=u.user_metadata?.name||u.email.split('@')
 
 // PLAN
 async function loadPlan(){const{data}=await sb.from('user_plans').select('plan').eq('user_id',user.id).single();return data?.plan||'trial';}
-const isPro=()=>plan==='pro'||plan==='trial';
+const isPro=()=>plan==='pro'||plan==='trial'||plan==='premium';
+const isPremium=()=>plan==='premium'||plan==='trial';
 function renderLocked(name,desc){return`<div style="text-align:center;padding:4rem 2rem;max-width:460px;margin:0 auto;animation:fade .3s ease"><div style="width:56px;height:56px;background:var(--bg-e);border:1px solid var(--bd);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 1.5rem">🔒</div><p style="font-size:19px;font-weight:700;color:var(--t1);margin-bottom:8px;letter-spacing:-.4px">${name} is a Pro feature</p><p style="font-size:14px;color:var(--t2);margin-bottom:2rem;line-height:1.75">${desc}</p><div style="background:linear-gradient(135deg,var(--p1s),rgba(124,58,237,.08));border:1px solid var(--p1b);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;text-align:left"><p style="font-size:11px;font-weight:600;color:var(--p1);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem">Included in Pro</p><p style="font-size:13px;color:var(--t2);line-height:1.8">Unlimited reports · 12 months data · AI insights · Trend prediction · Daily calendar · Invoice tracker · Client breakdown · Import data · Tax estimator · Break-even calculator · Share codes · Business profile + tailored AI</p></div><p style="font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px">Pro — $40/month</p><p style="font-size:13px;color:var(--t2);margin-bottom:1.5rem">Or $30/month billed annually · Save $120/year</p><a href="/" style="display:inline-block;padding:11px 28px;background:var(--p1);color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:'Space Grotesk',sans-serif">View pricing →</a></div>`;}
 
 // DB
-async function loadReports(){const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:(d.month_data||[]).map(m=>({...DEF,...m})),clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||'',daily_data:d.daily_data||{},profile:d.profile||{type:'',industry:'',pricing:'',description:'',experience:'',team:''},invoices:d.invoices||[]}));activeId=reports[0].id;}}
+async function loadReports(){const{data,error}=await sb.from('reports').select('*').eq('user_id',user.id).order('created_at');if(error||!data||!data.length){const r=makeReport('H1 2025');reports=[r];activeId=r.id;await saveToDB(r);}else{reports=data.map(d=>({id:d.id,db_id:d.id,name:d.name,biz_name:d.biz_name,start_month:d.start_month,start_year:d.start_year,duration:d.duration,month_data:(d.month_data||[]).map(m=>({...DEF,...m})),clients:d.clients||[],goals:d.goals||{revenue:6000,profit:4000},insights:d.insights||'',daily_data:d.daily_data||{},profile:d.profile||{type:'',industry:'',pricing:'',description:'',experience:'',team:''},invoices:d.invoices||[],expense_categories:d.expense_categories||{}}));activeId=reports[0].id;}}
 async function saveToDB(r){
-  const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data||{},profile:r.profile||{},invoices:r.invoices||[]};
+  const p={user_id:user.id,name:r.name,biz_name:r.biz_name,start_month:r.start_month,start_year:r.start_year,duration:r.duration,month_data:r.month_data,clients:r.clients,goals:r.goals,insights:r.insights,daily_data:r.daily_data||{},profile:r.profile||{},invoices:r.invoices||[],expense_categories:r.expense_categories||{}};
   if(r.db_id){
     const{error}=await sb.from('reports').update(p).eq('id',r.db_id);
     if(error){console.error('Save error:',error);showToast('Save failed: '+error.message,'err');}
@@ -724,7 +795,8 @@ function render(){
     h+=`<div class="kpi-grid">${[{l:'Total revenue',v:fmt(totRev),c:p1},{l:'Net profit',v:fmt(netP),c:netP>=0?'var(--ok)':'var(--err)'},{l:'Profit margin',v:pct(pMgn),c:pMgn>=20?'var(--ok)':'var(--err)'},{l:'Effective rate',v:fmtR(effR),c:p2},{l:'Avg monthly',v:fmt(avgR),c:'var(--t1)'},{l:'Total projects',v:String(totProj),c:'var(--t2)'}].map(k=>`<div class="kpi"><div class="kpi-l">${k.l}</div><div class="kpi-v" style="color:${k.c}">${k.v}</div></div>`).join('')}</div>`;
     if(prediction!==null){const trend=prediction>avgR;h+=`<div class="card" style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;align-items:center"><div><p class="ct" style="margin-bottom:4px">AI trend prediction</p><p style="font-size:11px;color:var(--t3)">Linear trend — ${r.duration} months of data</p></div><div style="text-align:right"><p style="font-size:11px;color:var(--t3);margin-bottom:2px">Projected next month</p><p style="font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${trend?'var(--ok)':'var(--err)'}">${fmt(prediction)}</p><p style="font-size:11px;color:${trend?'var(--ok)':'var(--err)'}">${trend?'↑':'↓'} ${Math.abs(((prediction-avgR)/avgR)*100).toFixed(1)}% vs avg</p></div></div></div>`;}
     h+=`<div class="cg"><div class="card"><p class="ct">Revenue vs expenses</p><div class="leg"><span><span class="ld" style="background:${p1}"></span>Revenue</span><span><span class="ld" style="background:${p2}"></span>Expenses</span></div><div class="cw"><canvas id="cRev" role="img" aria-label="Revenue vs expenses"></canvas></div></div><div class="card"><p class="ct">Monthly net profit</p><div class="cw"><canvas id="cProfit" role="img" aria-label="Net profit"></canvas></div></div></div>`;
-    h+=`<div class="card"><p class="ct">Edit monthly data</p><div class="mchips">${labels.map((l,i)=>`<button class="chip ${activeMonth===i?'active':''}" onclick="setAM(${i})">${l.short}</button>`).join('')}</div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">${labels[activeMonth]?.label||''}</p><div class="ig">${[{f:'revenue',l:'Revenue ($)'},{f:'expenses',l:'Expenses ($)'},{f:'hours',l:'Hours'},{f:'clients',l:'Clients'},{f:'projects',l:'Projects'}].map(({f,l})=>`<div><label>${l}</label><input type="number" class="nim" value="${r.month_data[activeMonth]?.[f]??0}" onchange="updMD(${activeMonth},'${f}',this.value)"></div>`).join('')}</div><div style="margin-top:12px;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--t2);font-weight:500">Income type:</span><button class="chip ${r.month_data[activeMonth]?.recurring?'active':''}" onclick="updMD(${activeMonth},'recurring',${!r.month_data[activeMonth]?.recurring})">${r.month_data[activeMonth]?.recurring?'✓ Recurring':'One-time'}</button></div><div style="margin-top:12px"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Notes for ${labels[activeMonth]?.label||'this month'}</label><textarea class="di" style="height:56px;resize:vertical;font-size:13px" placeholder="e.g. Landed new client, took vacation..." oninput="updMD(${activeMonth},'notes',this.value)">${r.month_data[activeMonth]?.notes||''}</textarea></div></div>`;
+    h+=`<div class="card"><p class="ct">Edit monthly data</p><div class="mchips">${labels.map((l,i)=>`<button class="chip ${activeMonth===i?'active':''}" onclick="setAM(${i})">${l.short}</button>`).join('')}</div><p style="font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">${labels[activeMonth]?.label||''}</p><div class="ig">${[{f:'revenue',l:'Revenue ($)'},{f:'expenses',l:'Expenses ($)'},{f:'hours',l:'Hours'},{f:'clients',l:'Clients'},{f:'projects',l:'Projects'}].map(({f,l})=>`<div><label>${l}</label><input type="number" class="nim" value="${r.month_data[activeMonth]?.[f]??0}" onchange="updMD(${activeMonth},'${f}',this.value)"></div>`).join('')}</div><div style="margin-top:12px;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--t2);font-weight:500">Income type:</span><button class="chip ${r.month_data[activeMonth]?.recurring?'active':''}" onclick="updMD(${activeMonth},'recurring',${!r.month_data[activeMonth]?.recurring})">${r.month_data[activeMonth]?.recurring?'✓ Recurring':'One-time'}</button></div><div style="margin-top:12px"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:8px">Expense breakdown by category <span style="color:var(--p2);font-weight:400">(Premium)</span></label>${isPremium()?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${(()=>{const labels2=getLabels(r.start_month,r.start_year,r.duration);const lbl=labels2[activeMonth];if(!lbl)return'';const pts=lbl.label.split(' '),mo=MN.findIndex(m=>m===pts[0]),yr=parseInt(pts[1]);const k=getExpCatKey(yr,mo);const saved=r.expense_categories?.[k]||{};return EXP_CATS.map((cat,ci)=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${EXP_COLORS[ci]};flex-shrink:0"></div><label style="font-size:11px;color:var(--t3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${cat}</label><input type="number" min="0" placeholder="0" value="${saved[cat]||''}" style="width:70px;padding:3px 6px;border:1px solid var(--bd);border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--t1);background:var(--bg-s)" onchange="updMonthExpCat(${activeMonth},'${cat}',Number(this.value)||0)"></div>`).join('');})()}</div>`:`<div style="padding:8px 12px;background:var(--bg-e);border:1px solid var(--bd);border-radius:7px;font-size:12px;color:var(--t3)">Expense categories are a Premium feature. <a href="/" style="color:var(--p2)">Upgrade →</a></div>`}</div>
+          <div style="margin-top:12px"><label style="display:block;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:5px">Notes for ${labels[activeMonth]?.label||'this month'}</label><textarea class="di" style="height:56px;resize:vertical;font-size:13px" placeholder="e.g. Landed new client, took vacation..." oninput="updMD(${activeMonth},'notes',this.value)">${r.month_data[activeMonth]?.notes||''}</textarea></div></div>`;
     h+=`<div class="card"><div class="ih"><div><p style="font-size:13px;font-weight:600;color:var(--t1)">AI business insights</p><p style="font-size:11px;color:var(--t3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:600">Included in PDF export</p></div><button class="gb" id="gen-btn" onclick="${isPro()?'genInsights()':"showToast('AI insights are a Pro feature','warn')"}" ${(!isPro()||!apiKey)?'disabled':''}>${!isPro()?'Pro feature 🔒':!apiKey?'Add API key below':'Generate insights →'}</button></div>${!apiKey?`<div class="an">Enter your Anthropic API key to enable AI insights and import features. <a href="https://console.anthropic.com" target="_blank">Get one free →</a> &nbsp;<a onclick="showApiGuide=true;render()" style="cursor:pointer;color:var(--warn)">How does it work?</a><div style="display:flex;gap:8px;margin-top:10px"><input id="api-input" type="password" placeholder="sk-ant-..." class="di" style="border-color:rgba(234,179,8,.2)"><button class="btn sm" onclick="saveKey()" style="background:#CA8A04;color:#fff;border-color:#CA8A04">Save</button></div></div>`:''} ${r.insights?`<div class="ib">${r.insights}</div>`:'<div id="ins-out"></div>'}</div>`;
   }
 
@@ -754,6 +826,8 @@ function render(){
 
   if(tab==='tools'){if(!isPro()){h+=renderLocked('Tools','Access the tax estimator to plan quarterly payments and the break-even calculator to know your monthly targets.');}
     else{
+    // Expense breakdown
+    h+=`<div class="card"><p class="ct">Expense breakdown by category <span style="font-size:10px;font-weight:400;color:var(--p2)">Premium</span></p>${isPremium()?renderExpBreakdown(r,p1):`<div class="empty" style="padding:1.5rem">Expense categories are a Premium feature. <a href="/" style="color:var(--p2)">Upgrade →</a></div>`}</div>`;
     const annualNetP=netP/r.duration*12;
     h+=`<div class="card"><p class="ct">Tax estimator</p><p style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:1rem">Estimate your quarterly tax payment based on your state, filing status, and net profit. <strong style="color:var(--t1)">Planning purposes only</strong> — always consult a tax professional.</p><div class="tools-grid"><div><label class="al">State</label><select id="tax-state" class="di" style="padding:8px 10px" onchange="taxState=this.value">${STATES.map(s=>`<option value="${s.c}"${taxState===s.c?' selected':''}>${s.n}${s.r===0?' (no income tax)':''}</option>`).join('')}</select></div><div><label class="al">Filing status</label><select id="tax-filing" class="di" style="padding:8px 10px" onchange="taxFiling=this.value"><option value="single"${taxFiling==='single'?' selected':''}>Single</option><option value="married"${taxFiling==='married'?' selected':''}>Married filing jointly</option></select></div><div><label class="al">Annual net profit ($)</label><input type="number" class="nim" id="tax-income" value="${Math.round(annualNetP)||0}"></div></div><button class="btn blue" onclick="runTaxCalc()">Calculate taxes →</button><div id="tax-result-box">${taxResult?renderTaxResult():''}</div></div>`;
     h+=`<div class="card"><p class="ct">Break-even calculator</p><p style="font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:1rem">Find exactly how much revenue you need to earn monthly to cover your costs.</p><div class="tools-grid"><div><label class="al">Monthly fixed expenses ($)</label><input type="number" class="nim" id="be-fixed" value="${beFixed}" placeholder="0"></div><div><label class="al">Variable costs (% of revenue)</label><input type="number" class="nim" id="be-variable" value="${beVariable}" min="0" max="99" placeholder="0"></div></div><button class="btn blue" onclick="runBreakEven()">Calculate →</button><div id="be-result-box">${beResult!==null?renderBreakEven():''}</div></div>`;
