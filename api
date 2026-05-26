@@ -7,10 +7,16 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SIGNING_SECRET = process.env.LEMONSQUEEZY_SIGNING_SECRET;
 
 const VARIANT_PLANS = {
+  // Numeric variant IDs (used in webhook payloads)
   '1708952': 'pro',
   '1708954': 'pro',
   '1708960': 'premium',
   '1708963': 'premium',
+  // UUID slugs (fallback)
+  'de0b9747-7d10-4550-8954-3acc01b1b02c': 'pro',
+  'bad8fd48-0b29-4799-b448-df4b89b2f48a': 'pro',
+  '70ef4754-97a1-4746-8bf8-441081c85a11': 'premium',
+  '509242ea-9bbf-4299-9460-3ee86024fd28': 'premium',
 };
 
 async function getRawBody(req) {
