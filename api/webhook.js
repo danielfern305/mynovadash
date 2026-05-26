@@ -7,10 +7,10 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SIGNING_SECRET = process.env.LEMONSQUEEZY_SIGNING_SECRET;
 
 const VARIANT_PLANS = {
-  '1708952': 'pro',
-  '1708954': 'pro',
-  '1708960': 'premium',
-  '1708963': 'premium',
+  '1708952': 'pro',  '1708954': 'pro',
+  '1708960': 'premium', '1708963': 'premium',
+  '1672554': 'pro',  '1672563': 'pro',
+  '1672576': 'premium', '1672585': 'premium',
   'de0b9747-7d10-4550-8954-3acc01b1b02c': 'pro',
   'bad8fd48-0b29-4799-b448-df4b89b2f48a': 'pro',
   '70ef4754-97a1-4746-8bf8-441081c85a11': 'premium',
@@ -27,24 +27,14 @@ async function getRawBody(req) {
 }
 
 async function upsertPlan(email, plan) {
-  console.log('[webhook] upsertPlan called:', email, plan);
-
-  // List all users and find by email manually
   const r = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?page=1&per_page=50`, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-    },
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
   });
   const data = await r.json();
-  console.log('[webhook] users fetched, count:', data?.users?.length);
-
   const user = data?.users?.find(u => u.email?.toLowerCase() === email.toLowerCase());
-  console.log('[webhook] matched user:', user?.id || 'NOT FOUND');
-
   if (!user) return;
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/user_plans`, {
+  await fetch(`${SUPABASE_URL}/rest/v1/user_plans`, {
     method: 'POST',
     headers: {
       apikey: SUPABASE_KEY,
@@ -54,22 +44,17 @@ async function upsertPlan(email, plan) {
     },
     body: JSON.stringify({ user_id: user.id, plan }),
   });
-  console.log('[webhook] upsert status:', res.status);
 }
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const rawBody = await getRawBody(req);
-  console.log('[webhook] received, body length:', rawBody.length);
 
   if (SIGNING_SECRET) {
     const sig = req.headers['x-signature'];
     const digest = crypto.createHmac('sha256', SIGNING_SECRET).update(rawBody).digest('hex');
-    if (sig !== digest) {
-      console.log('[webhook] signature mismatch');
-      return res.status(401).json({ error: 'Invalid signature' });
-    }
+    if (sig !== digest) return res.status(401).json({ error: 'Invalid signature' });
   }
 
   let payload;
@@ -81,14 +66,10 @@ export default async function handler(req, res) {
   const email = attrs?.user_email || attrs?.customer_email;
   const variantId = String(attrs?.variant_id || attrs?.first_order_item?.variant_id || '');
 
-  console.log('[webhook] event:', event, '| email:', email, '| variantId:', variantId);
-
   if (!email) return res.status(200).json({ ok: true });
 
   if (['order_created', 'subscription_created', 'subscription_updated'].includes(event)) {
-    const plan = VARIANT_PLANS[variantId] || 'pro';
-    console.log('[webhook] setting plan:', plan);
-    await upsertPlan(email, plan);
+    await upsertPlan(email, VARIANT_PLANS[variantId] || 'pro');
   } else if (['subscription_cancelled', 'subscription_expired'].includes(event)) {
     await upsertPlan(email, 'free');
   }
